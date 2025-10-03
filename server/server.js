@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 var neo4j = require('neo4j-driver');
 
+
 (async () => {
   const driver = neo4j.driver(
     process.env.NEO4J_URI,
@@ -30,9 +31,8 @@ var neo4j = require('neo4j-driver');
 
 })();
 
-    res.json({ fruits: ["apple", "banana", "john"]})
 });
 
-app.listen(8080,() => {
-    console.log("api listening on 8080")
+app.listen(8080, () => {
+  console.log("api listening on 8080")
 });
