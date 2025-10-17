@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Homepage from "./components/Homepage";
 import About from "./components/About";
 import Surveypage from "./components/Surveypage";
+import ReportObstruction from "./components/ReportObstruction";
 
 export default function App() {
   // Define button labels + descriptions inside
@@ -10,7 +11,11 @@ export default function App() {
     {
       path: "/",
       element: <UmbcNavbar />, // layout with navbar
-      children: [{ index: true, element: <Homepage />, path: "homepage" }, { path: "about", element: <About /> }, { path: "survey", element: <Surveypage /> }],
+      children: [{ index: true, element: <Homepage />, path: "homepage" }, 
+        { path: "about", element: <About /> }, 
+        { path: "survey", element: <Surveypage /> },
+        {path: "ReportObstruction", element: <ReportObstruction />}
+      ],
     },
   ]);
 
