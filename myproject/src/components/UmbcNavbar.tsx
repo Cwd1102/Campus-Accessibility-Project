@@ -1,8 +1,6 @@
 import { Container, Nav, Navbar } from "react-bootstrap";
 import { Outlet } from "react-router-dom";
 
-
-
 export default function UmbcNavbar() {
   return (
     <>
@@ -31,6 +29,7 @@ export default function UmbcNavbar() {
               <Nav className="ms-auto d-flex align-items-center flex-nowrap gap-2">
                 <Nav.Link href="homepage">Home</Nav.Link>
                 <Nav.Link href="about">About</Nav.Link>
+                <Nav.Link href="ReportObstruction">Report Obstruction</Nav.Link>
                 <Nav.Link href="survey">Survey</Nav.Link>
               </Nav>
             </Navbar.Collapse>
