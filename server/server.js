@@ -13,6 +13,10 @@ const driver = neo4j.driver(
   neo4j.auth.basic(process.env.NEO4J_USERNAME, process.env.NEO4J_PASSWORD)
 );
 
+// Route imports
+const reportRoutes = require("./routes/reports");
+app.use("/report", reportRoutes);
+
 app.get("/route", async (req, res) =>{
   const { srcId, dstId } = req.query;
   console.log(`[ROUTE] ${new Date().toISOString()} src=${srcId} dst=${dstId}`);
