@@ -3,22 +3,29 @@ const router = express.Router();
 const { connectDB, getClient } = require("../db/mongo");
 
 
-router.get("/", async (req, res) => {
+router.post("/", async (req, res) => {
   try {
 
     // Reuse existing Mongo client and ensure connection
     const db = await connectDB();
     const reports = db.collection("reports");
+    console.log("Incoming POST /report", req.body);
 
+    const newReport = {
+      building: req.body.building,
+      floor: req.body.floor,
+      locationType: req.body.locationType,
+      notes: req.body.notes,
+      timestamp: new Date().toISOString(),
+    };
 
-    const allReports = await reports.find().toArray();
-
-    console.log(`[MONGO] Found ${allReports.length} reports`);
-    res.json({ reports: allReports });   
+    const result = await reports.insertOne(newReport);
+    console.log("saving")
+    res.status(201).json({ success: true, id: result.insertedId });
 
     } catch (err) {
     console.error("Error listing databases:", err);
-    res.status(500).json({ error: "Failed to list databases" });
+    res.status(500).json({ error: "Failed to add" });
   }
 });
 

@@ -1,8 +1,13 @@
 require('dotenv').config()
 const express = require("express");
+const cors = require("cors");
 const app = express();
 var neo4j = require('neo4j-driver');
 
+
+
+app.use(cors());
+app.use(express.json());
 app.listen(8080, () => {
   console.log("api listening on 8080")
 });

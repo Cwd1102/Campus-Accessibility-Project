@@ -136,8 +136,9 @@ export default function ReportObstruction() {
     setNotes("");
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!isComplete) return;
+
     const entry: ReportEntry = {
       id: uid(),
       building,
@@ -146,15 +147,28 @@ export default function ReportObstruction() {
       notes: notes.trim() || undefined,
       timestamp: new Date().toISOString(),
     };
-    const next = [...entries, entry];
-    setEntries(next);
-    setSaved({ id: entry.id });
 
-    // Immediately offer a CSV download of ALL collected entries so far
-    download("accessibility_reports.csv", toCSV(next));
+    try {
+      const res = await fetch("http://localhost:8080/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(entry),
+      });
 
-    // Reset for next report
-    resetForm();
+      if (!res.ok) throw new Error("Failed to save report");
+      
+      const data = await res.json();
+
+
+
+      console.log("Saved report:", data);
+      setSaved({ id: data.id });
+      resetForm();
+    } catch (err) {
+      console.error("Error submitting report:", err);
+      alert("Failed to submit report — please try again.");
+    }
+
   };
 
   return (
