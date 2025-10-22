@@ -4,7 +4,7 @@
  // return <span>We can add a quick survey for improvement</span>;
 //}
 import { useEffect, useMemo, useState } from "react";
-import { Container, Row, Col, Card, Button, Dropdown, DropdownButton, Form, Alert, Table,
+import { Container, Row, Col, Card, Button, Dropdown, DropdownButton, Form, Alert,
 } from "react-bootstrap";
 
 // IMPORTANT: be sure your app includes Bootstrap's CSS once at the root entrypoint:
@@ -268,26 +268,10 @@ export default function ReportObstruction() {
                   >
                     Enter
                   </Button>
-                  <Button
-                    variant="outline-secondary"
-                    onClick={() => download("accessibility_reports.csv", toCSV(entries))}
-                    disabled={entries.length === 0}
-                  >
-                    Export CSV
-                  </Button>
-                  <Button
-                    variant="outline-danger"
-                    onClick={() => {
-                      if (confirm("Clear all locally saved reports?")) setEntries([]);
-                    }}
-                    disabled={entries.length === 0}
-                  >
-                    Clear All (Local)
-                  </Button>
                 </Col>
               </Row>
 
-              {/* Preview of locally saved entries */}
+              {/* Preview of locally saved entries
               <hr className="my-4" />
               <h6 className="mb-3">Saved reports (local preview)</h6>
               {entries.length === 0 ? (
@@ -320,7 +304,7 @@ export default function ReportObstruction() {
                     </tbody>
                   </Table>
                 </div>
-              )}
+              )} */}
 
               <div className="mt-3 small text-muted">
                 Data is saved in your browser's localStorage under key "{STORAGE_KEY}".

@@ -1,7 +1,22 @@
 import { Container, Nav, Navbar } from "react-bootstrap";
+import LoginButton from 'react-bootstrap/Button';
 import { Outlet } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { useAuth } from "../Auth";
+import { useNavigate } from "react-router-dom";
 
 export default function UmbcNavbar() {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/homepage");
+    //window.location.href = "/login"
+  };
+
+  //if (loading) return null; 
+
   return (
     <>
       <Container fluid className="vw-100 vh-100 p-0 d-flex flex-column">
@@ -31,6 +46,15 @@ export default function UmbcNavbar() {
                 <Nav.Link href="about">About</Nav.Link>
                 <Nav.Link href="ReportObstruction">Report Obstruction</Nav.Link>
                 <Nav.Link href="survey">Survey</Nav.Link>
+                {!user ?(
+                <Link to="/LoginPage">
+                  <LoginButton variant="outline-light">Login</LoginButton>
+                </Link> 
+                ) : (
+                 <LoginButton variant="outline-light" onClick={handleLogout}>Logout</LoginButton>
+                )}
+              
+        
               </Nav>
             </Navbar.Collapse>
           </Container>
