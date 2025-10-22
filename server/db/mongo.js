@@ -1,5 +1,5 @@
 // db/mongo.js
-const { MongoClient } = require("mongodb");
+const { MongoClient , ObjectId} = require("mongodb");
 
 const client = new MongoClient(process.env.MONGO_URI);
 let db;
@@ -17,4 +17,4 @@ function getClient() {
   return client;
 }
 
-module.exports = { connectDB, getClient };
+module.exports = { connectDB, getClient, ObjectId };

@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { connectDB, getClient } = require("../db/mongo");
+const { connectDB, getClient, ObjectId } = require("../db/mongo");
 
 
-router.post("/", async (req, res) => {
+router.post("/create", async (req, res) => {
   try {
 
     // Reuse existing Mongo client and ensure connection
@@ -27,6 +27,57 @@ router.post("/", async (req, res) => {
     console.error("Error listing databases:", err);
     res.status(500).json({ error: "Failed to add" });
   }
+});
+
+router.post("/find", async (req, res) => {
+
+  try{
+
+    // Reuse existing Mongo client and ensure connection
+    const db = await connectDB();
+    const reports = db.collection("reports");
+    console.log("Incoming POST /delete");
+
+    const id = req.body; // replace with your actual ObjectId
+    const result = await reports.findOne({ _id: new ObjectId(id) });
+
+    console.log(result);
+    res.json(result)
+  }catch(err){
+    console.error("Error finding file", err)
+    res.status(500).json({error: "Failed to find"})
+  }
+
+});
+
+
+router.post("/delete", async (req,res) => {
+
+  try{
+
+    // Reuse existing Mongo client and ensure connection
+    const db = await connectDB();
+    const reports = db.collection("reports");
+    console.log("Incoming POST /delete");
+
+    const id = req.body; // replace with your actual ObjectId
+    const result = await reports.deleteOne({ _id: new ObjectId(id) });
+
+    if (result.deletedCount === 1) {
+      console.log("Document deleted");
+    } else {
+      console.log("No matching document found");
+    }
+
+    console.log(result);
+    res.json(result)
+  }catch(err){
+    console.error("Error finding file", err)
+    res.status(500).json({error: "Failed to find"})
+  }
+
+
+
 });
 
 module.exports = router;
