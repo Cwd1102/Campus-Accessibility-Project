@@ -1,8 +1,13 @@
 require('dotenv').config()
 const express = require("express");
+const cors = require("cors");
 const app = express();
 var neo4j = require('neo4j-driver');
 
+
+
+app.use(cors());
+app.use(express.json());
 app.listen(8080, () => {
   console.log("api listening on 8080")
 });
@@ -12,6 +17,10 @@ const driver = neo4j.driver(
   process.env.NEO4J_URI,
   neo4j.auth.basic(process.env.NEO4J_USERNAME, process.env.NEO4J_PASSWORD)
 );
+
+// Route imports
+const reportRoutes = require("./routes/reports");
+app.use("/report", reportRoutes);
 
 app.get("/route", async (req, res) =>{
   const { srcId, dstId } = req.query;
