@@ -290,7 +290,7 @@ const deleteOne = async (mongoId: string) => {
                         }
                       }}
                     >
-                      Meow
+                      Deleeeeete
                     </button>
                   </td>
                 </tr>
