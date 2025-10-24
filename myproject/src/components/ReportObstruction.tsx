@@ -4,7 +4,7 @@
  // return <span>We can add a quick survey for improvement</span>;
 //}
 import { useEffect, useMemo, useState } from "react";
-import { Container, Row, Col, Card, Button, Dropdown, DropdownButton, Form, Alert, Table,
+import { Container, Row, Col, Card, Button, Dropdown, DropdownButton, Form, Alert,
 } from "react-bootstrap";
 
 // IMPORTANT: be sure your app includes Bootstrap's CSS once at the root entrypoint:
@@ -27,45 +27,7 @@ function uid() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
 
-function toCSV(entries: ReportEntry[]): string {
-  const header = [
-    "id",
-    "timestamp",
-    "building",
-    "floor",
-    "locationType",
-    "notes",
-  ];
-  const escape = (val: string | undefined) =>
-    '"' + String(val ?? "").replaceAll('"', '""') + '"';
-  const lines = [header.join(",")].concat(
-    entries.map((e) =>
-      [
-        escape(e.id),
-        escape(e.timestamp),
-        escape(e.building),
-        escape(e.floor),
-        escape(e.locationType),
-        escape(e.notes ?? ""),
-      ].join(",")
-    )
-  );
-  return lines.join("\n");
-}
 
-function download(filename: string, text: string, type = "text/csv") {
-  const blob = new Blob([text], { type });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-}
-
-// Example campus data (customize as needed)
 const BUILDINGS = [
   "AOK Library & Gallery (852)",
   "Biological Sciences (851)",
@@ -149,7 +111,7 @@ export default function ReportObstruction() {
     };
 
     try {
-      const res = await fetch("http://localhost:8080/report", {
+      const res = await fetch("http://localhost:8080/report/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(entry),
@@ -268,26 +230,10 @@ export default function ReportObstruction() {
                   >
                     Enter
                   </Button>
-                  <Button
-                    variant="outline-secondary"
-                    onClick={() => download("accessibility_reports.csv", toCSV(entries))}
-                    disabled={entries.length === 0}
-                  >
-                    Export CSV
-                  </Button>
-                  <Button
-                    variant="outline-danger"
-                    onClick={() => {
-                      if (confirm("Clear all locally saved reports?")) setEntries([]);
-                    }}
-                    disabled={entries.length === 0}
-                  >
-                    Clear All (Local)
-                  </Button>
                 </Col>
               </Row>
 
-              {/* Preview of locally saved entries */}
+              {/* Preview of locally saved entries
               <hr className="my-4" />
               <h6 className="mb-3">Saved reports (local preview)</h6>
               {entries.length === 0 ? (
@@ -320,7 +266,7 @@ export default function ReportObstruction() {
                     </tbody>
                   </Table>
                 </div>
-              )}
+              )} */}
 
               <div className="mt-3 small text-muted">
                 Data is saved in your browser's localStorage under key "{STORAGE_KEY}".

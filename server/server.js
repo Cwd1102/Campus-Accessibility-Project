@@ -33,6 +33,26 @@ app.get("/route", async (req, res) =>{
   const session = driver.session();
   try {
 
+    console.log("Checking Graph...")
+    const check = await session.run(`
+      CALL gds.graph.exists('campusGraph') YIELD exists
+      RETURN exists
+    `);
+    const exists = check.records[0].get('exists');
+
+    if (!exists) {
+      console.log('[GDS] Rebuilding campusGraph...');
+      await session.run(`
+        CALL gds.graph.project(
+          'campusGraph',
+          { Node: { label: 'Node' } },
+          { CONNECTS: { type: 'CONNECTS', orientation: 'NATURAL', properties: ['cost'] } }
+        )
+      `);
+      console.log('[GDS] campusGraph created');
+    } else {
+      console.log('[GDS] Backend campusGraph already exists, skipping...');
+    }
 
     const query = `
 
