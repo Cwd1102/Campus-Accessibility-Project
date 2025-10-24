@@ -175,8 +175,8 @@ const deleteOne = async (mongoId: string) => {
 
   return (
     <div className="p-4">
-      <div className="mb-3 flex flex-wrap items-center gap-2">
-        <h1 className="text-xl font-semibold">Manage Obstruction Reports</h1>
+      <div className="mb-4 flex flex-wrap items-center gap-2">
+        <h1 className="mt-1">Manage Obstruction Reports</h1>
         <div className="ml-auto flex items-center gap-2">
           <button
             onClick={() => setPage((p) => Math.max(1, p - 1))}
@@ -203,7 +203,7 @@ const deleteOne = async (mongoId: string) => {
           <button
             onClick={handleDeleteSelected}
             disabled={!anyChecked || loading}
-            className="px-3 py-1 rounded border bg-red-600 text-white disabled:opacity-50"
+            className="px-3 py-1 rounded border bg-red-600 disabled:opacity-50"
           >
             Delete Selected ({selected.size || 0})
           </button>
@@ -290,7 +290,7 @@ const deleteOne = async (mongoId: string) => {
                         }
                       }}
                     >
-                      Delete
+                      Meow
                     </button>
                   </td>
                 </tr>

@@ -53,7 +53,7 @@ export default function UmbcNavbar() {
                 ) : (
                 <>
                  <Link to="/ManageObstruction">
-                  <Nav.Link>Manage Obstructions</Nav.Link>
+                  <Nav.Link href="ManageObstruction"> Manage Obstructions</Nav.Link>
                 </Link>
                 {/* <span className="text-light me-2">{user.email}</span> */}
                  <LoginButton variant="outline-light" onClick={handleLogout}>Logout</LoginButton>
