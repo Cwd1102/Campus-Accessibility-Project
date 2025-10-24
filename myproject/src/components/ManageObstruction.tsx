@@ -1,162 +1,309 @@
-import { useEffect, useMemo, useState } from "react";
-import { Container, Row, Col, Card, Button, Table, Alert, Spinner } from "react-bootstrap";
+import React, { useEffect, useMemo, useState } from "react";
 
-type LocationType = "Elevator" | "Ramp" | "Accessibility Route" | "Door Button" | "Other";
-
-interface ReportRow {
-  id: string;              // Mongo _id as string
+interface Report {
+  _id: string;
   building: string;
   floor: string;
-  locationType: LocationType;
-  notes?: string;
-  timestamp: string;       // ISO
+  locationType: string;
+  notes: string;
+  timestamp: string;
 }
 
-const API_BASE = "http://localhost:8080/report";
+const PAGE_SIZE = 10;
+const API_BASE = "http://localhost:8080";
+
+const isObjectId = (val: string) => /^[0-9a-fA-F]{24}$/.test(String(val).trim());
+const cleanObjectId = (id: string) => String(id).trim().replace(/^"|"$/g, "");
+
+const formatDateTime = (iso: string) => {
+  try {
+    const d = new Date(iso);
+    if (isNaN(d.getTime())) return iso;
+    return d.toLocaleString();
+  } catch {
+    return iso;
+  }
+};
 
 export default function ManageObstruction() {
-  const [items, setItems] = useState<ReportRow[]>([]);
+  const [reports, setReports] = useState<Report[]>([]);
+  const [page, setPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [deleting, setDeleting] = useState<string | null>(null);
-  const [successMsg, setSuccessMsg] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [reachedEnd, setReachedEnd] = useState<boolean>(false);
 
-  const fetchAll = async () => {
+  const allChecked = useMemo(
+    () => reports.length > 0 && reports.every((r) => selected.has(r._id)),
+    [reports, selected]
+  );
+
+  const anyChecked = selected.size > 0;
+
+  const fetchPage = async (p = page) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_BASE}/list`);
-      if (!res.ok) throw new Error(`List failed: ${res.status}`);
-      const data = await res.json();
-      setItems(data.items ?? []);
+      const res = await fetch(`${API_BASE}/report/loadpage?page=${p}`);
+      if (!res.ok) throw new Error(`Failed to load page ${p}: ${res.status}`);
+      const data: Report[] = await res.json();
+      setReports(data);
+      setReachedEnd(data.length < PAGE_SIZE);
+      setSelected(new Set());
     } catch (e: any) {
-      setError(e?.message || "Failed to load items");
+      setError(e?.message ?? "Failed to load data");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchAll();
-  }, []);
+    fetchPage(page);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page]);
 
-  const handleDelete = async (id: string) => {
-    if (!id) return;
-    setDeleting(id);
-    setError(null);
-    setSuccessMsg(null);
-    try {
-      const res = await fetch(`${API_BASE}/delete`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ id }),
-      });
-      if (!res.ok) throw new Error(`Delete failed: ${res.status}`);
-      const data = await res.json();
-      if (!data.success) throw new Error("No matching document found");
-      setItems((prev) => prev.filter((r) => r.id !== id));
-      setSuccessMsg("Report deleted.");
-    } catch (e: any) {
-      setError(e?.message || "Failed to delete");
-    } finally {
-      setDeleting(null);
+  const toggleOne = (id: string) => {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleAll = () => {
+    if (allChecked) {
+      setSelected(new Set());
+    } else {
+      setSelected(new Set(reports.map((r) => r._id)));
     }
   };
 
-  const count = items.length;
-  const subtitle = useMemo(() => {
-    if (loading) return "Loading reports…";
-    if (count === 0) return "No reports yet.";
-    return `${count} report${count === 1 ? "" : "s"} total`;
-  }, [loading, count]);
+  // const deleteOne = async (id: string) => {
+  //   const res = await fetch(`${API_BASE}/report/delete`, {
+  //     method: "POST",
+  //     headers: { "Content-Type": "application/json" },
+  //     body: JSON.stringify(id),
+  //   });
+  //   if (!res.ok) {
+  //     const txt = await res.text().catch(() => "");
+  //     throw new Error(`Delete failed (${res.status}): ${txt || id}`);
+  //   }
+  // };
+
+//   const deleteOne = async (id: string) => {
+//   const res = await fetch(`${API_BASE}/report/delete`, {
+//     method: "POST",
+//     headers: { "Content-Type": "application/json" },
+//     // send the id as plain text (no quotes)
+//     body: JSON.stringify(id.replace(/^\"|\"$/g, "")),
+//   });
+//   if (!res.ok) {
+//     const txt = await res.text().catch(() => "");
+//     throw new Error(`Delete failed (${res.status}): ${txt || id}`);
+//   }
+// };
+
+// const deleteOne = async (id: string) => {
+//   const res = await fetch(`${API_BASE}/report/delete`, {
+//     method: "POST",
+//     headers: { "Content-Type": "text/plain" },
+//     body: id, // send raw text, not JSON
+//   });
+//   if (!res.ok) {
+//     const txt = await res.text().catch(() => "");
+//     throw new Error(`Delete failed (${res.status}): ${txt || id}`);
+//   }
+// };
+
+const deleteOne = async (mongoId: string) => {
+  const clean = cleanObjectId(mongoId);
+  if (!isObjectId(clean)) {
+    throw new Error(`Invalid Mongo ObjectId: ${clean}`);
+  }
+
+  const res = await fetch(`${API_BASE}/report/delete`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: clean }), // <-- matches your PowerShell example
+  });
+
+  // Try reading JSON (e.g., { acknowledged: true, deletedCount: 1 })
+  let payload: any = null;
+  try { payload = await res.json(); } catch { /* ignore */ }
+
+  if (!res.ok) {
+    const txt = typeof payload === "string" ? payload : JSON.stringify(payload);
+    throw new Error(`Delete failed (${res.status}): ${txt || clean}`);
+  }
+
+  if (payload && typeof payload === "object" && "deletedCount" in payload) {
+    if (payload.deletedCount !== 1) {
+      throw new Error(`Backend did not delete _id=${clean} (deletedCount=${payload.deletedCount})`);
+    }
+  }
+};
+
+  const handleDeleteSelected = async () => {
+    if (!anyChecked) return;
+    const confirmMsg = selected.size === 1
+      ? "Delete this report? This cannot be undone."
+      : `Delete ${selected.size} reports? This cannot be undone.`;
+    if (!window.confirm(confirmMsg)) return;
+
+    const ids = Array.from(selected);
+    const prevReports = reports;
+    setReports((curr) => curr.filter((r) => !selected.has(r._id)));
+    setSelected(new Set());
+
+    try {
+      for (const id of ids) {
+        // eslint-disable-next-line no-await-in-loop
+        await deleteOne(id);
+      }
+      if (prevReports.length === ids.length) {
+        if (page > 1) setPage((p) => p - 1);
+        else fetchPage(1);
+      }
+    } catch (e: any) {
+      setReports(prevReports);
+      setError(e?.message ?? "Failed to delete one or more items");
+    }
+  };
+
+  const handleRefresh = () => fetchPage(page);
 
   return (
-    <Container className="py-6">
-      <Row className="justify-content-center">
-        <Col md={11} lg={10}>
-          <Card className="shadow-sm border-0">
-            <Card.Body>
-              <div className="d-flex align-items-center justify-content-between mb-2">
-                <div>
-                  <Card.Title className="h4 mb-0">Manage Accessibility Reports</Card.Title>
-                  <Card.Subtitle className="text-muted">{subtitle}</Card.Subtitle>
-                </div>
-                <div className="d-flex gap-2">
-                  <Button variant="outline-secondary" onClick={fetchAll} disabled={loading}>
-                    {loading ? <Spinner size="sm" /> : "Refresh"}
-                  </Button>
-                </div>
-              </div>
+    <div className="p-4">
+      <div className="mb-3 flex flex-wrap items-center gap-2">
+        <h1 className="text-xl font-semibold">Manage Obstruction Reports</h1>
+        <div className="ml-auto flex items-center gap-2">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={loading || page === 1}
+            className="px-3 py-1 rounded border disabled:opacity-50"
+          >
+            ◀ Prev
+          </button>
+          <span className="px-2">Page {page}</span>
+          <button
+            onClick={() => setPage((p) => p + 1)}
+            disabled={loading || reachedEnd}
+            className="px-3 py-1 rounded border disabled:opacity-50"
+          >
+            Next ▶
+          </button>
+          <button
+            onClick={handleRefresh}
+            disabled={loading}
+            className="px-3 py-1 rounded border disabled:opacity-50"
+          >
+            Refresh
+          </button>
+          <button
+            onClick={handleDeleteSelected}
+            disabled={!anyChecked || loading}
+            className="px-3 py-1 rounded border bg-red-600 text-white disabled:opacity-50"
+          >
+            Delete Selected ({selected.size || 0})
+          </button>
+        </div>
+      </div>
 
-              {error && (
-                <Alert variant="danger" className="mt-3" onClose={() => setError(null)} dismissible>
-                  {error}
-                </Alert>
-              )}
-              {successMsg && (
-                <Alert
-                  variant="success"
-                  className="mt-3"
-                  onClose={() => setSuccessMsg(null)}
-                  dismissible
-                >
-                  {successMsg}
-                </Alert>
-              )}
+      {error && (
+        <div className="mb-3 rounded border border-red-500 bg-red-50 p-2 text-red-700">
+          {error}
+        </div>
+      )}
 
-              <div className="table-responsive mt-3">
-                <Table hover size="sm" className="align-middle">
-                  <thead>
-                    <tr>
-                      <th>When</th>
-                      <th>Building</th>
-                      <th>Floor</th>
-                      <th>Type</th>
-                      <th>Notes</th>
-                      <th style={{ width: 120 }}>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {items.map((r) => (
-                      <tr key={r.id}>
-                        <td>{new Date(r.timestamp).toLocaleString()}</td>
-                        <td>{r.building}</td>
-                        <td>{r.floor}</td>
-                        <td>{r.locationType}</td>
-                        <td style={{ maxWidth: 360, whiteSpace: "pre-wrap" }}>{r.notes}</td>
-                        <td>
-                          <div className="d-flex gap-2">
-                            <Button
-                              variant="outline-danger"
-                              size="sm"
-                              onClick={() => handleDelete(r.id)}
-                              disabled={deleting === r.id}
-                              title={`Delete ${r.id}`}
-                            >
-                              {deleting === r.id ? "Deleting…" : "Delete"}
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                    {!loading && items.length === 0 && (
-                      <tr>
-                        <td colSpan={6} className="text-muted">
-                          Nothing to display yet.
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </Table>
-              </div>
+      <div className="overflow-x-auto rounded border">
+        <table className="min-w-full text-sm">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="p-2 text-left w-10">
+                <input
+                  type="checkbox"
+                  checked={allChecked}
+                  onChange={toggleAll}
+                  aria-label="Select all"
+                />
+              </th>
+              <th className="p-2 text-left">Building</th>
+              <th className="p-2 text-left">Floor</th>
+              <th className="p-2 text-left">Type</th>
+              <th className="p-2 text-left">Notes</th>
+              <th className="p-2 text-left">Timestamp</th>
+              <th className="p-2 text-left">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {loading ? (
+              <tr>
+                <td className="p-3" colSpan={7}>
+                  Loading...
+                </td>
+              </tr>
+            ) : reports.length === 0 ? (
+              <tr>
+                <td className="p-3" colSpan={7}>
+                  No reports found.
+                </td>
+              </tr>
+            ) : (
+              reports.map((r) => (
+                <tr key={r._id} className="border-t">
+                  <td className="p-2 align-top">
+                    <input
+                      type="checkbox"
+                      checked={selected.has(r._id)}
+                      onChange={() => toggleOne(r._id)}
+                      aria-label={`Select ${r.building}`}
+                    />
+                  </td>
+                  <td className="p-2 align-top">{r.building}</td>
+                  <td className="p-2 align-top">{r.floor}</td>
+                  <td className="p-2 align-top">{r.locationType}</td>
+                  <td className="p-2 align-top max-w-[24rem]">
+                    <span title={r.notes}>{r.notes}</span>
+                  </td>
+                  <td className="p-2 align-top whitespace-nowrap">{formatDateTime(r.timestamp)}</td>
+                  <td className="p-2 align-top">
+                    <button
+                      className="px-2 py-1 rounded border"
+                      onClick={async () => {
+                        try {
+                          // await deleteOne(r._id);
+                          // setReports((curr) => curr.filter((x) => x._id !== r._id));
+                          // setSelected((curr) => {
+                          //   const next = new Set(curr);
+                          //   next.delete(r._id);
+                          //   return next;
+                          await deleteOne(r._id);          // send {_id} as { id: "<_id>" }
+                          await fetchPage(page);           // refresh from backend to reflect truth
+                          setSelected((curr) => {
+                            const next = new Set(curr);
+                            next.delete(r._id);
+                            return next;
+                          });
+                        } catch (e: any) {
+                          setError(e?.message ?? "Failed to delete item");
+                        }
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
 
-              <div className="small text-muted mt-2">
-                Tip: If you added reports before this page existed, hit Refresh.
-              </div>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-    </Container>
+      <div className="mt-3 text-xs text-gray-600">
+        Showing up to {PAGE_SIZE} items per page. Newest first.
+      </div>
+    </div>
   );
 }
+
