@@ -30,7 +30,6 @@ router.post("/create", async (req, res) => {
 });
 
 router.post("/find", async (req, res) => {
-
   try{
 
     // Reuse existing Mongo client and ensure connection

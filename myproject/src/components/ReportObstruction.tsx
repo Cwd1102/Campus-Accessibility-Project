@@ -27,45 +27,7 @@ function uid() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
 
-// function toCSV(entries: ReportEntry[]): string {
-//   const header = [
-//     "id",
-//     "timestamp",
-//     "building",
-//     "floor",
-//     "locationType",
-//     "notes",
-//   ];
-//   const escape = (val: string | undefined) =>
-//     '"' + String(val ?? "").replaceAll('"', '""') + '"';
-//   const lines = [header.join(",")].concat(
-//     entries.map((e) =>
-//       [
-//         escape(e.id),
-//         escape(e.timestamp),
-//         escape(e.building),
-//         escape(e.floor),
-//         escape(e.locationType),
-//         escape(e.notes ?? ""),
-//       ].join(",")
-//     )
-//   );
-//   return lines.join("\n");
-// }
 
-// function download(filename: string, text: string, type = "text/csv") {
-//   const blob = new Blob([text], { type });
-//   const url = URL.createObjectURL(blob);
-//   const a = document.createElement("a");
-//   a.href = url;
-//   a.download = filename;
-//   document.body.appendChild(a);
-//   a.click();
-//   a.remove();
-//   URL.revokeObjectURL(url);
-// }
-
-// Example campus data (customize as needed)
 const BUILDINGS = [
   "AOK Library & Gallery (852)",
   "Biological Sciences (851)",
