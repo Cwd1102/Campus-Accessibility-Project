@@ -48,6 +48,7 @@ export default function App() {
       element: <UmbcNavbar />, // layout with navbar
       children: [
         { index: true, element: <Homepage /> }, // this is now the default page
+        {path: "homepage", element: <Homepage /> },
         { path: "about", element: <About /> },
         { path: "survey", element: <Surveypage /> },
         {path: "ReportObstruction", element: <ReportObstruction />},
