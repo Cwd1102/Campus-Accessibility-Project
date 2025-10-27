@@ -30,6 +30,7 @@ function uid() {
 
 const BUILDINGS = [
   "AOK Library & Gallery (852)",
+  "Administration (850)",
   "Biological Sciences (851)",
   "Commons (895)",
   "Engineering (886)",
@@ -46,13 +47,14 @@ const BUILDINGS = [
   "University Center (857)",
 ];
 
-const FLOORS = ["Basement", "Ground", "1", "2", "3", "4", "5"];
+const FLOORS = ["Basement", "Ground", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
 
 const LOCATION_TYPES: ReportEntry["locationType"][] = [
   "Elevator",
   "Ramp",
   "Accessibility Route",
   "Door Button",
+  "Other"
 ];
 
 export default function ReportObstruction() {
@@ -151,7 +153,7 @@ export default function ReportObstruction() {
                   dismissible
                   className="mb-4"
                 >
-                  Thanks — your report was saved locally and a CSV download was generated.
+                  Thank you — your report was successfully submitted
                 </Alert>
               )}
 
@@ -269,8 +271,7 @@ export default function ReportObstruction() {
               )} */}
 
               <div className="mt-3 small text-muted">
-                Data is saved in your browser's localStorage under key "{STORAGE_KEY}".
-                For a multi-user/production setup, wire the Enter button to a backend endpoint (see notes below).
+                Please select all dropdowns to create a report.
               </div>
             </Card.Body>
           </Card>
