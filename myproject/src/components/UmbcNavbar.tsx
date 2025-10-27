@@ -11,7 +11,7 @@ export default function UmbcNavbar() {
 
   const handleLogout = async () => {
     await logout();
-    navigate("/homepage");
+    navigate("/ManageObstruction");
     //window.location.href = "/login"
   };
 
@@ -46,12 +46,18 @@ export default function UmbcNavbar() {
                 <Nav.Link href="about">About</Nav.Link>
                 <Nav.Link href="ReportObstruction">Report Obstruction</Nav.Link>
                 <Nav.Link href="survey">Survey</Nav.Link>
-                {!user ?(
+                 {!user ?(
                 <Link to="/LoginPage">
                   <LoginButton variant="outline-light">Login</LoginButton>
                 </Link> 
                 ) : (
+                <>
+                 <Link to="/ManageObstruction">
+                  <Nav.Link href="ManageObstruction"> Manage Obstructions</Nav.Link>
+                </Link>
+                {/* <span className="text-light me-2">{user.email}</span> */}
                  <LoginButton variant="outline-light" onClick={handleLogout}>Logout</LoginButton>
+                 </>
                 )}
               
         

@@ -33,29 +33,53 @@ app.get("/route", async (req, res) =>{
   const session = driver.session();
   try {
 
+    console.log("Checking Graph...")
+    const check = await session.run(`
+      CALL gds.graph.exists('campusGraph') YIELD exists
+      RETURN exists
+    `);
+    const exists = check.records[0].get('exists');
+
+    if (!exists) {
+      console.log('[GDS] Rebuilding campusGraph...');
+      await session.run(`
+        CALL gds.graph.project(
+          'campusGraph',
+          'Intersection',
+          {
+            SEGMENT: {
+              type: 'SEGMENT',
+              orientation: 'UNDIRECTED',
+              properties: ['cost']
+            }
+          }
+        );
+      `);
+      console.log('[GDS] campusGraph created');
+    } else {
+      console.log('[GDS] Backend campusGraph already exists, skipping...');
+    }
 
     const query = `
 
+    MATCH (source:Intersection {id: $srcId}), (target:Intersection {id:$dstId})
 
-    WITH $srcId AS srcId, $dstId AS dstId
-    MATCH (src:Node {id: srcId})
-    MATCH (dst:Node {id: dstId})
-    CALL gds.shortestPath.dijkstra.stream(
-      'campusGraph',
-      {
-        sourceNode: (src),
-        targetNode: (dst),
-        relationshipWeightProperty: 'cost'
-      }
-    )
-    YIELD path, totalCost
-    WITH path, totalCost, nodes(path) AS ns, relationships(path) AS rs
+    CALL gds.shortestPath.dijkstra.stream('campusGraph', {
+      sourceNode: (source),
+      targetNode: (target),
+      relationshipWeightProperty: 'cost'
+    })
+    YIELD nodeIds, totalCost
+
+    WITH [nodeId IN nodeIds | gds.util.asNode(nodeId).id] AS intersections, totalCost
+    UNWIND range(0, size(intersections)-2) AS i
+    WITH intersections, intersections[i] AS from, intersections[i+1] AS to, totalCost
+    MATCH (a:Intersection {id:from})-[r:SEGMENT]-(b:Intersection {id:to})
     RETURN
-      [n IN ns | n.id] AS route,
-      [i IN range(0, size(rs) - 1) |
-        { from: ns[i].id, to: ns[i+1].id, cost: rs[i].cost }
-      ] AS legs,
-      totalCost
+      totalCost,
+      collect(r.id) AS segments,
+      collect({from: from, to: to, segment: r.id, cost: r.cost}) AS details,
+      intersections;
   `;
 
 
@@ -70,8 +94,8 @@ app.get("/route", async (req, res) =>{
 
     const rec = result.records[0];
     return res.json({
-      route: rec.get("route"),
-      legs: rec.get("legs"),
+      route: rec.get("segments"),  // ordered list of intersections
+      legs: rec.get("details"),         // segment-by-segment info
       totalCost: rec.get("totalCost")
     });
 
