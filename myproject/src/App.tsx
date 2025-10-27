@@ -42,13 +42,13 @@ function RequireAuth({ children }: { children: React.ReactNode}) {
 }
 
 export default function App() {
-  // Define button labels + descriptions inside
   const router = createBrowserRouter([
     {
       path: "/",
       element: <UmbcNavbar />, // layout with navbar
-      children: [{ index: true, element: <Homepage />, path: "homepage" }, 
-        { path: "about", element: <About /> }, 
+      children: [
+        { index: true, element: <Homepage /> }, // this is now the default page
+        { path: "about", element: <About /> },
         { path: "survey", element: <Surveypage /> },
         {path: "ReportObstruction", element: <ReportObstruction />},
         {path: "LoginPage", element: <LoginPage /> },
@@ -66,9 +66,6 @@ export default function App() {
     },
   ]);
 
-  return (
-    <>
-      <RouterProvider router={router} />
-    </>
-  );
+  return <RouterProvider router={router} />;
 }
+
