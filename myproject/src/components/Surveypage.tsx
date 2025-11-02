@@ -62,13 +62,15 @@ export default function SurveyPage() {
     setComments((prev) => ({ ...prev, [q]: val }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const missing = questions.filter((q) => responses[q] === undefined);
     if (missing.length > 0) {
       // Popup message if required questions are missing
       window.alert("Please complete all required questions before submitting.");
       return;
     }
+
+    const responseArray = questions.map((q) => responses[q]);
 
     const entry: SurveyResponse = {
       id: uid(),
@@ -80,8 +82,28 @@ export default function SurveyPage() {
     setEntries(next);
     setSubmitted(true);
 
-    const csv = toCSV(next);
-    download("campus_accessibility_survey.csv", csv);
+
+    try {
+      const res = await fetch("http://localhost:8080/survey/create", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          responses: responseArray,
+          comments: comments["overall"] || "",
+        }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        console.error("Server error:", data);
+        window.alert(`Failed to submit survey: ${data.error || res.statusText}`);
+      } else {
+        console.log("Survey saved with ID:", data.id);
+      }
+    } catch (err) {
+      console.error("Network error:", err);
+      window.alert("Could not connect to the server.");
+    }
 
     setResponses({});
     setComments({});

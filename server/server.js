@@ -20,9 +20,9 @@ const driver = neo4j.driver(
 
 // Route imports
 const reportRoutes = require("./routes/reports");
+const reportSurvey = require("./routes/survey");
 app.use("/report", reportRoutes);
-const reportSurvey = require("./routes/survery");
-app.use("/survery", reportSurvey);
+app.use("/survey", reportSurvey);
 
 app.get("/route", async (req, res) =>{
   const { srcId, dstId } = req.query;
