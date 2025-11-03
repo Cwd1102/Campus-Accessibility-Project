@@ -23,18 +23,6 @@ function uid() {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
 
-function download(filename: string, text: string, type = "text/csv") {
-  const blob = new Blob([text], { type });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
-}
-
 export default function SurveyPage() {
   const questions = [
     "The campus map clearly indicates accessible routes.",
@@ -80,25 +68,8 @@ export default function SurveyPage() {
     setEntries(next);
     setSubmitted(true);
 
-    const csv = toCSV(next);
-    download("campus_accessibility_survey.csv", csv);
-
     setResponses({});
     setComments({});
-  };
-
-  const toCSV = (entries: SurveyResponse[]) => {
-    const header = ["id", "timestamp", ...questions, "Additional Comments"];
-    const lines = entries.map((entry) => {
-      const row = [
-        entry.id,
-        entry.timestamp,
-        ...questions.map((q) => entry.ratings[q]?.toString() ?? ""),
-        entry.comments["overall"] ?? "",
-      ];
-      return row.join(",");
-    });
-    return [header.join(","), ...lines].join("\n");
   };
 
   return (
