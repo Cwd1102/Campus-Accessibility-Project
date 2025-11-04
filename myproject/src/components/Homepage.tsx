@@ -1,284 +1,554 @@
-// // import { Container} from "react-bootstrap";
-// // import Dropdown from 'react-bootstrap/Dropdown';
-// // import DropdownButton from 'react-bootstrap/DropdownButton';
+// // import { useState } from "react";
+// // import { Container, Row, Col } from "react-bootstrap";
+// // import Dropdown from "react-bootstrap/Dropdown";
+// // import DropdownButton from "react-bootstrap/DropdownButton";
+// // import MapDisplay from "./MapDisplay";
 
 // // export default function Homepage() {
-// //   return <span>
-// //     <>
-// //     <Container fluid className="p-4 d-flex flex-column">
-// //         <DropdownButton id="from-button" title="Select your Starting Point">
-// //           <Dropdown.Item href="#/action-1">RAC</Dropdown.Item>
-// //           <Dropdown.Item href="#/action-2">Sherman Hall</Dropdown.Item>
-// //           <Dropdown.Item href="#/action-3">Biology</Dropdown.Item>
-// //           <Dropdown.Item href="#/action-2">ILSB</Dropdown.Item>
-// //           <Dropdown.Item href="#/action-2">Commons</Dropdown.Item>
-// //           <Dropdown.Item href="#/action-2">University Center</Dropdown.Item>
-// //           <Dropdown.Item href="#/action-2">Sondheim Hall</Dropdown.Item>
-// //           <Dropdown.Item href="#/action-2">Math & Psychology</Dropdown.Item>
-// //           <Dropdown.Item href="#/action-2">Performing Arts and Humanities</Dropdown.Item>
-// //           <Dropdown.Item href="#/action-2">Physics</Dropdown.Item>
-// //           <Dropdown.Item href="#/action-2">Public Policy</Dropdown.Item>
-// //           <Dropdown.Item href="#/action-2">AOK Library & Gallery</Dropdown.Item>
-// //         </DropdownButton>
-// //     </Container>
+// //   const [fromBuilding, setFromBuilding] = useState<string | null>(null);
+// //   const [toBuilding, setToBuilding] = useState<string | null>(null);
+// //   const [fromEntrances, setFromEntrances] = useState<string[]>([]);
+// //   const [toEntrances, setToEntrances] = useState<string[]>([]);
 
-// //     <Container fluid className="p-4 d-flex flex-column">
-// //       <DropdownButton id="to-button" title="Select your Destination">
-// //         <Dropdown.Item href="#/action-1">RAC</Dropdown.Item>
-// //         <Dropdown.Item href="#/action-2">Sherman Hall</Dropdown.Item>
-// //         <Dropdown.Item href="#/action-3">Biology</Dropdown.Item>
-// //         <Dropdown.Item href="#/action-2">ILSB</Dropdown.Item>
-// //         <Dropdown.Item href="#/action-2">Commons</Dropdown.Item>
-// //         <Dropdown.Item href="#/action-2">University Center</Dropdown.Item>
-// //         <Dropdown.Item href="#/action-2">Sondheim Hall</Dropdown.Item>
-// //         <Dropdown.Item href="#/action-2">Math & Psychology</Dropdown.Item>
-// //         <Dropdown.Item href="#/action-2">Performing Arts and Humanities</Dropdown.Item>
-// //         <Dropdown.Item href="#/action-2">Physics</Dropdown.Item>
-// //         <Dropdown.Item href="#/action-2">Public Policy</Dropdown.Item>
-// //         <Dropdown.Item href="#/action-2">AOK Library & Gallery</Dropdown.Item>
-// //       </DropdownButton>
+// //   const buildings = [
+// //     "RAC",
+// //     "Sherman Hall",
+// //     "Biology",
+// //     "ILSB",
+// //     "Commons",
+// //     "University Center",
+// //     "Sondheim Hall",
+// //     "Math & Psychology",
+// //     "Performing Arts and Humanities",
+// //     "Physics",
+// //     "Public Policy",
+// //     "AOK Library & Gallery",
+// //     "Fine Arts"
+// //   ];
+
+// //   // Fetch entrances for selected building
+// //   const fetchEntrances = async (buildingName: string, type: "from" | "to") => {
+// //     try {
+// //       const response = await fetch(`http://localhost:8080/entrances?buildingName=${encodeURIComponent(buildingName)}`);
+// //       const data = await response.json();
+// //       if (type === "from") setFromEntrances(data.entrances);
+// //       else setToEntrances(data.entrances);
+// //     } catch (err) {
+// //       console.error("Error fetching entrances:", err);
+// //     }
+// //   };
+
+// //   const handleSelectBuilding = (building: string, type: "from" | "to") => {
+// //     if (type === "from") {
+// //       setFromBuilding(building);
+// //       fetchEntrances(building, "from");
+// //     } else {
+// //       setToBuilding(building);
+// //       fetchEntrances(building, "to");
+// //     }
+// //   };
+
+// //   return (
+// //     <Container fluid className="p-4">
+// //       <Row>
+// //         {/* Left side - Dropdowns */}
+// //         <Col md={6} className="d-flex flex-column gap-4">
+// //           <DropdownButton id="from-button" title={fromBuilding || "Select your Starting Point"}>
+// //             {buildings.map((b) => (
+// //               <Dropdown.Item key={b} onClick={() => handleSelectBuilding(b, "from")}>
+// //                 {b}
+// //               </Dropdown.Item>
+// //             ))}
+// //           </DropdownButton>
+
+// //           {/* Entrances for starting point */}
+// //           {fromEntrances.length > 0 && (
+// //             <DropdownButton id="from-entrance-button" title="Select Entrance">
+// //               {fromEntrances.map((e) => (
+// //                 <Dropdown.Item key={e}>{e}</Dropdown.Item>
+// //               ))}
+// //             </DropdownButton>
+// //           )}
+
+// //           <DropdownButton id="to-button" title={toBuilding || "Select your Destination"}>
+// //             {buildings.map((b) => (
+// //               <Dropdown.Item key={b} onClick={() => handleSelectBuilding(b, "to")}>
+// //                 {b}
+// //               </Dropdown.Item>
+// //             ))}
+// //           </DropdownButton>
+
+// //           {/* Entrances for destination */}
+// //           {toEntrances.length > 0 && (
+// //             <DropdownButton id="to-entrance-button" title="Select Entrance">
+// //               {toEntrances.map((e) => (
+// //                 <Dropdown.Item key={e}>{e}</Dropdown.Item>
+// //               ))}
+// //             </DropdownButton>
+// //           )}
+// //         </Col>
+
+// //         {/* Right side - Map */}
+// //         <Col
+// //           md={6}
+// //           className="d-flex flex-column align-items-center justify-content-center"
+// //         >
+// //           <h4 className="mb-3 text-center">Campus Map</h4>
+// //           <MapDisplay />
+// //         </Col>
+// //       </Row>
 // //     </Container>
-// //   </>
-// //   </span>;
+// //   );
 // // }
 
-// import { Container } from "react-bootstrap";
-// import Dropdown from "react-bootstrap/Dropdown";
-// import DropdownButton from "react-bootstrap/DropdownButton";
+// // import { useEffect, useState } from "react";
+// // import { Container, Row, Col, Dropdown } from "react-bootstrap";
+// // import MapDisplay from "./MapDisplay";
 
-// export default function Homepage() {
-//   return (
-//     <>
-//       <Container fluid className="p-4 d-flex flex-column">
-//         <DropdownButton id="from-button" title="Select your Starting Point">
-//           <Dropdown.Item>RAC</Dropdown.Item>
-//           <Dropdown.Item>Sherman Hall</Dropdown.Item>
-//           <Dropdown.Item>Biology</Dropdown.Item>
-//           <Dropdown.Item>ILSB</Dropdown.Item>
-//           <Dropdown.Item>Commons</Dropdown.Item>
-//           <Dropdown.Item>University Center</Dropdown.Item>
-//           <Dropdown.Item>Sondheim Hall</Dropdown.Item>
-//           <Dropdown.Item>Math & Psychology</Dropdown.Item>
-//           <Dropdown.Item>Performing Arts and Humanities</Dropdown.Item>
-//           <Dropdown.Item>Physics</Dropdown.Item>
-//           <Dropdown.Item>Public Policy</Dropdown.Item>
-//           <Dropdown.Item>AOK Library & Gallery</Dropdown.Item>
-//         </DropdownButton>
-//       </Container>
+// // export default function Homepage() {
+// //   const [entranceData, setEntranceData] = useState<Record<string, string[]>>({});
+// //   const [fromSelection, setFromSelection] = useState<{ building: string; entrance: string | null }>({
+// //     building: "",
+// //     entrance: null,
+// //   });
+// //   const [toSelection, setToSelection] = useState<{ building: string; entrance: string | null }>({
+// //     building: "",
+// //     entrance: null,
+// //   });
 
-//       <Container fluid className="p-4 d-flex flex-column">
-//         <DropdownButton id="to-button" title="Select your Destination">
-//           <Dropdown.Item>RAC</Dropdown.Item>
-//           <Dropdown.Item>Sherman Hall</Dropdown.Item>
-//           <Dropdown.Item>Biology</Dropdown.Item>
-//           <Dropdown.Item>ILSB</Dropdown.Item>
-//           <Dropdown.Item>Commons</Dropdown.Item>
-//           <Dropdown.Item>University Center</Dropdown.Item>
-//           <Dropdown.Item>Sondheim Hall</Dropdown.Item>
-//           <Dropdown.Item>Math & Psychology</Dropdown.Item>
-//           <Dropdown.Item>Performing Arts and Humanities</Dropdown.Item>
-//           <Dropdown.Item>Physics</Dropdown.Item>
-//           <Dropdown.Item>Public Policy</Dropdown.Item>
-//           <Dropdown.Item>AOK Library & Gallery</Dropdown.Item>
-//         </DropdownButton>
-//       </Container>
+// //   const buildings = [
+// //     "RAC",
+// //     "Sherman Hall",
+// //     "Biology",
+// //     "ILSB",
+// //     "Commons",
+// //     "University Center",
+// //     "Sondheim Hall",
+// //     "Math & Psychology",
+// //     "Performing Arts and Humanities",
+// //     "Physics",
+// //     "Public Policy",
+// //     "AOK Library & Gallery",
+// //     "Fine Arts",
+// //   ];
 
-//       {/* PDF display */}
-//       <Container fluid className="p-4 d-flex flex-column align-items-center">
-//         <h3>Campus Map</h3>
-//         <iframe
-//           src="/2024-ACCESSIBLE-ROUTES-MAP-2.pdf"
-//           width="80%"
-//           height="600px"
-//           title="Campus Map PDF"
-//           style={{ border: "none" }}
-//         ></iframe>
-//       </Container>
-//     </>
-//   );
-// }
+// //   // Fetch all entrances for buildings once (to avoid multiple fetches)
+// //   useEffect(() => {
+// //     async function fetchAllEntrances() {
+// //       const newData: Record<string, string[]> = {};
+// //       for (const b of buildings) {
+// //         try {
+// //           const res = await fetch(
+// //             `http://localhost:8080/entrances?buildingName=${encodeURIComponent(b)}`
+// //           );
+// //           const data = await res.json();
+// //           newData[b] = data.entrances || [];
+// //         } catch (err) {
+// //           console.error(`Error fetching entrances for ${b}:`, err);
+// //           newData[b] = [];
+// //         }
+// //       }
+// //       setEntranceData(newData);
+// //     }
+// //     fetchAllEntrances();
+// //   }, []);
 
+// //   return (
+// //     <Container fluid className="p-4">
+// //       <Row>
+// //         {/* Left side - Dropdowns */}
+// //         <Col md={6} className="d-flex flex-column gap-4">
+// //           {/* FROM DROPDOWN */}
+// //           <Dropdown>
+// //             <Dropdown.Toggle id="from-dropdown" variant="secondary">
+// //               {fromSelection.entrance
+// //                 ? `From: ${fromSelection.entrance}`
+// //                 : fromSelection.building
+// //                 ? `From: ${fromSelection.building}`
+// //                 : "Select Starting Point"}
+// //             </Dropdown.Toggle>
 
-// import { Container, Row, Col } from "react-bootstrap";
-// import Dropdown from "react-bootstrap/Dropdown";
-// import DropdownButton from "react-bootstrap/DropdownButton";
+// //             <Dropdown.Menu>
+// //               {buildings.map((b) => (
+// //                 <Dropdown key={b} drop="end">
+// //                   <Dropdown.Toggle as="div" className="dropdown-item">
+// //                     {b}
+// //                   </Dropdown.Toggle>
+// //                   <Dropdown.Menu>
+// //                     {entranceData[b]?.length ? (
+// //                       entranceData[b].map((e) => (
+// //                         <Dropdown.Item
+// //                           key={e}
+// //                           onClick={() =>
+// //                             setFromSelection({ building: b, entrance: e })
+// //                           }
+// //                         >
+// //                           {e}
+// //                         </Dropdown.Item>
+// //                       ))
+// //                     ) : (
+// //                       <Dropdown.Item disabled>No entrances found</Dropdown.Item>
+// //                     )}
+// //                   </Dropdown.Menu>
+// //                 </Dropdown>
+// //               ))}
+// //             </Dropdown.Menu>
+// //           </Dropdown>
 
-// export default function Homepage() {
-//   return (
-//     <>
-//       <Container fluid className="p-4">
-//         <Row>
-//           {/* Left side - Dropdowns */}
-//           <Col md={6} className="d-flex flex-column gap-4">
-//             <DropdownButton id="from-button" title="Select your Starting Point">
-//               <Dropdown.Item>RAC</Dropdown.Item>
-//               <Dropdown.Item>Sherman Hall</Dropdown.Item>
-//               <Dropdown.Item>Biology</Dropdown.Item>
-//               <Dropdown.Item>ILSB</Dropdown.Item>
-//               <Dropdown.Item>Commons</Dropdown.Item>
-//               <Dropdown.Item>University Center</Dropdown.Item>
-//               <Dropdown.Item>Sondheim Hall</Dropdown.Item>
-//               <Dropdown.Item>Math & Psychology</Dropdown.Item>
-//               <Dropdown.Item>Performing Arts and Humanities</Dropdown.Item>
-//               <Dropdown.Item>Physics</Dropdown.Item>
-//               <Dropdown.Item>Public Policy</Dropdown.Item>
-//               <Dropdown.Item>AOK Library & Gallery</Dropdown.Item>
-//             </DropdownButton>
+// //           {/* TO DROPDOWN */}
+// //           <Dropdown>
+// //             <Dropdown.Toggle id="to-dropdown" variant="secondary">
+// //               {toSelection.entrance
+// //                 ? `To: ${toSelection.entrance}`
+// //                 : toSelection.building
+// //                 ? `To: ${toSelection.building}`
+// //                 : "Select Destination"}
+// //             </Dropdown.Toggle>
 
-//             <DropdownButton id="to-button" title="Select your Destination">
-//               <Dropdown.Item>RAC</Dropdown.Item>
-//               <Dropdown.Item>Sherman Hall</Dropdown.Item>
-//               <Dropdown.Item>Biology</Dropdown.Item>
-//               <Dropdown.Item>ILSB</Dropdown.Item>
-//               <Dropdown.Item>Commons</Dropdown.Item>
-//               <Dropdown.Item>University Center</Dropdown.Item>
-//               <Dropdown.Item>Sondheim Hall</Dropdown.Item>
-//               <Dropdown.Item>Math & Psychology</Dropdown.Item>
-//               <Dropdown.Item>Performing Arts and Humanities</Dropdown.Item>
-//               <Dropdown.Item>Physics</Dropdown.Item>
-//               <Dropdown.Item>Public Policy</Dropdown.Item>
-//               <Dropdown.Item>AOK Library & Gallery</Dropdown.Item>
-//             </DropdownButton>
-//           </Col>
+// //             <Dropdown.Menu>
+// //               {buildings.map((b) => (
+// //                 <Dropdown key={b} drop="end">
+// //                   <Dropdown.Toggle as="div" className="dropdown-item">
+// //                     {b}
+// //                   </Dropdown.Toggle>
+// //                   <Dropdown.Menu>
+// //                     {entranceData[b]?.length ? (
+// //                       entranceData[b].map((e) => (
+// //                         <Dropdown.Item
+// //                           key={e}
+// //                           onClick={() =>
+// //                             setToSelection({ building: b, entrance: e })
+// //                           }
+// //                         >
+// //                           {e}
+// //                         </Dropdown.Item>
+// //                       ))
+// //                     ) : (
+// //                       <Dropdown.Item disabled>No entrances found</Dropdown.Item>
+// //                     )}
+// //                   </Dropdown.Menu>
+// //                 </Dropdown>
+// //               ))}
+// //             </Dropdown.Menu>
+// //           </Dropdown>
+// //         </Col>
 
-//           {/* Right side - PDF map */}
-//           <Col
-//             md={6}
-//             className="d-flex flex-column align-items-center justify-content-center"
-//           >
-//             <h4 className="mb-3">Campus Map</h4>
-//             <iframe
-//               src="/2024-ACCESSIBLE-ROUTES-MAP-2.jpg"
-//               width="100%"
-//               height="750px"
-//               title="Campus Map PDF"
-//               style={{ border: "1px solid #ccc", borderRadius: "8px" }}
-//             ></iframe>
-//           </Col>
-//         </Row>
-//       </Container>
-//     </>
-//   );
-// }
+// //         {/* Right side - Map */}
+// //         <Col
+// //           md={6}
+// //           className="d-flex flex-column align-items-center justify-content-center"
+// //         >
+// //           <h4 className="mb-3 text-center">Campus Map</h4>
+// //           <MapDisplay />
+// //         </Col>
+// //       </Row>
+// //     </Container>
+// //   );
+// // }
 
-
-// import { Container, Row, Col } from "react-bootstrap";
-// import Dropdown from "react-bootstrap/Dropdown";
-// import DropdownButton from "react-bootstrap/DropdownButton";
+// import { useState } from "react";
+// import { Container, Row, Col, Dropdown } from "react-bootstrap";
 // import MapDisplay from "./MapDisplay";
 
-
 // export default function Homepage() {
+//   // State for selected starting and destination entrances
+//   const [fromSelection, setFromSelection] = useState<{ building: string; entrance: string | null }>({
+//     building: "",
+//     entrance: null,
+//   });
+//   const [toSelection, setToSelection] = useState<{ building: string; entrance: string | null }>({
+//     building: "",
+//     entrance: null,
+//   });
+
+//   // Hardcoded buildings and entrances
+//   const buildingEntrances: Record<string, string[]> = {
+//     "Fine Arts": ["FA_1_N", "FA_2_C", "FA_1_S", "FA_0_E"],
+//     "Performing Arts and Humanities": ["PAHB_1_N", "PAHB_1_E", "PAHB_2_N"],
+//     "Engineering": ["ENG_2_W"],
+//     "ITE": ["ITE_3_W", "ITE_1_E"],
+//     // Other buildings can be listed without entrances
+//     "RAC": [],
+//     "Sherman Hall": [],
+//     "Biology": [],
+//     "ILSB": [],
+//     "Commons": [],
+//     "University Center": [],
+//     "Sondheim Hall": [],
+//     "Math & Psychology": [],
+//     "Physics": [],
+//     "Public Policy": [],
+//     "AOK Library & Gallery": [],
+//   };
+
+//   const allBuildings = Object.keys(buildingEntrances);
+
 //   return (
-//     <>
-//       <Container fluid className="p-4">
-//         <Row>
-//           {/* Left side - Dropdowns */}
-//           <Col md={6} className="d-flex flex-column gap-4">
-//             <DropdownButton id="from-button" title="Select your Starting Point">
-//               <Dropdown.Item>RAC</Dropdown.Item>
-//               <Dropdown.Item>Sherman Hall</Dropdown.Item>
-//               <Dropdown.Item>Biology</Dropdown.Item>
-//               <Dropdown.Item>ILSB</Dropdown.Item>
-//               <Dropdown.Item>Commons</Dropdown.Item>
-//               <Dropdown.Item>University Center</Dropdown.Item>
-//               <Dropdown.Item>Sondheim Hall</Dropdown.Item>
-//               <Dropdown.Item>Math & Psychology</Dropdown.Item>
-//               <Dropdown.Item>Performing Arts and Humanities</Dropdown.Item>
-//               <Dropdown.Item>Physics</Dropdown.Item>
-//               <Dropdown.Item>Public Policy</Dropdown.Item>
-//               <Dropdown.Item>AOK Library & Gallery</Dropdown.Item>
-//             </DropdownButton>
+//     <Container fluid className="p-4">
+//       <Row>
+//         {/* Left side - Dropdowns */}
+//         <Col md={6} className="d-flex flex-column gap-4">
+//           {/* FROM Dropdown */}
+//           <Dropdown>
+//             <Dropdown.Toggle id="from-dropdown" variant="secondary">
+//               {fromSelection.entrance
+//                 ? `From: ${fromSelection.entrance}`
+//                 : fromSelection.building
+//                 ? `From: ${fromSelection.building}`
+//                 : "Select Starting Point"}
+//             </Dropdown.Toggle>
 
-//             <DropdownButton id="to-button" title="Select your Destination">
-//               <Dropdown.Item>RAC</Dropdown.Item>
-//               <Dropdown.Item>Sherman Hall</Dropdown.Item>
-//               <Dropdown.Item>Biology</Dropdown.Item>
-//               <Dropdown.Item>ILSB</Dropdown.Item>
-//               <Dropdown.Item>Commons</Dropdown.Item>
-//               <Dropdown.Item>University Center</Dropdown.Item>
-//               <Dropdown.Item>Sondheim Hall</Dropdown.Item>
-//               <Dropdown.Item>Math & Psychology</Dropdown.Item>
-//               <Dropdown.Item>Performing Arts and Humanities</Dropdown.Item>
-//               <Dropdown.Item>Physics</Dropdown.Item>
-//               <Dropdown.Item>Public Policy</Dropdown.Item>
-//               <Dropdown.Item>AOK Library & Gallery</Dropdown.Item>
-//             </DropdownButton>
-//           </Col>
+//             <Dropdown.Menu>
+//               {allBuildings.map((b) => (
+//                 <Dropdown key={b} drop="end">
+//                   <Dropdown.Toggle as="div" className="dropdown-item">
+//                     {b}
+//                   </Dropdown.Toggle>
+//                   <Dropdown.Menu>
+//                     {buildingEntrances[b]?.length ? (
+//                       buildingEntrances[b].map((e) => (
+//                         <Dropdown.Item
+//                           key={e}
+//                           onClick={() =>
+//                             setFromSelection({ building: b, entrance: e })
+//                           }
+//                         >
+//                           {e}
+//                         </Dropdown.Item>
+//                       ))
+//                     ) : (
+//                       <Dropdown.Item
+//                         onClick={() =>
+//                           setFromSelection({ building: b, entrance: null })
+//                         }
+//                       >
+//                         (Main)
+//                       </Dropdown.Item>
+//                     )}
+//                   </Dropdown.Menu>
+//                 </Dropdown>
+//               ))}
+//             </Dropdown.Menu>
+//           </Dropdown>
 
-//           {/* Right side - Map image */}
-//           {/* <Col
-//             md={6}
-//             className="d-flex flex-column align-items-center justify-content-center"
-//           >
-//             <h4 className="mb-3">Campus Map</h4>
-//             <img
-//               src="/2024-ACCESSIBLE-ROUTES-MAP-2.jpg"
-//               alt="Campus Map"
-//               style={{
-//                 width: "90%",
-//                 height: "auto",
-//                 border: "1px solid #ccc",
-//                 borderRadius: "8px",
-//                 boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-//               }}
-//             />
-//           </Col> */}
-//           {/* Right side - MapDisplay component */}
-//         <Col md={6}>
-//           <MapDisplay />
+//           {/* TO Dropdown */}
+//           <Dropdown>
+//             <Dropdown.Toggle id="to-dropdown" variant="secondary">
+//               {toSelection.entrance
+//                 ? `To: ${toSelection.entrance}`
+//                 : toSelection.building
+//                 ? `To: ${toSelection.building}`
+//                 : "Select Destination"}
+//             </Dropdown.Toggle>
+
+//             <Dropdown.Menu>
+//               {allBuildings.map((b) => (
+//                 <Dropdown key={b} drop="end">
+//                   <Dropdown.Toggle as="div" className="dropdown-item">
+//                     {b}
+//                   </Dropdown.Toggle>
+//                   <Dropdown.Menu>
+//                     {buildingEntrances[b]?.length ? (
+//                       buildingEntrances[b].map((e) => (
+//                         <Dropdown.Item
+//                           key={e}
+//                           onClick={() =>
+//                             setToSelection({ building: b, entrance: e })
+//                           }
+//                         >
+//                           {e}
+//                         </Dropdown.Item>
+//                       ))
+//                     ) : (
+//                       <Dropdown.Item
+//                         onClick={() =>
+//                           setToSelection({ building: b, entrance: null })
+//                         }
+//                       >
+//                         (Main)
+//                       </Dropdown.Item>
+//                     )}
+//                   </Dropdown.Menu>
+//                 </Dropdown>
+//               ))}
+//             </Dropdown.Menu>
+//           </Dropdown>
 //         </Col>
 
-//         </Row>
-//       </Container>
-//     </>
+//         {/* Right side - MapDisplay */}
+//         <Col
+//           md={6}
+//           className="d-flex flex-column align-items-center justify-content-center"
+//         >
+//           <h4 className="mb-3 text-center">Campus Map</h4>
+//           <MapDisplay />
+//         </Col>
+//       </Row>
+//     </Container>
 //   );
 // }
 
-
-import { Container, Row, Col } from "react-bootstrap";
-import Dropdown from "react-bootstrap/Dropdown";
-import DropdownButton from "react-bootstrap/DropdownButton";
+import { useState } from "react";
+import { Container, Row, Col, Dropdown, Button } from "react-bootstrap";
 import MapDisplay from "./MapDisplay";
 
 export default function Homepage() {
+  const [fromSelection, setFromSelection] = useState<{ building: string; entrance: string | null }>({
+    building: "",
+    entrance: null,
+  });
+  const [toSelection, setToSelection] = useState<{ building: string; entrance: string | null }>({
+    building: "",
+    entrance: null,
+  });
+
+  const buildingEntrances: Record<string, string[]> = {
+    "Fine Arts": ["FA_1_N", "FA_2_C", "FA_1_S", "FA_0_E"],
+    "Performing Arts and Humanities": ["PAHB_1_N", "PAHB_1_E", "PAHB_2_N"],
+    "Engineering": ["ENG_2_W"],
+    "ITE": ["ITE_3_W", "ITE_1_E"],
+    "RAC": [],
+    "Sherman Hall": [],
+    "Biology": [],
+    "ILSB": [],
+    "Commons": [],
+    "University Center": [],
+    "Sondheim Hall": [],
+    "Math & Psychology": [],
+    "Physics": [],
+    "Public Policy": [],
+    "AOK Library & Gallery": [],
+  };
+
+  const allBuildings = Object.keys(buildingEntrances);
+
+  // Function called when submit button is pressed
+  const handleSubmit = async () => {
+    if (!fromSelection.entrance || !toSelection.entrance) {
+      alert("Please select both a starting and destination entrance!");
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:8080/route?srcId=${encodeURIComponent(
+          fromSelection.entrance
+        )}&dstId=${encodeURIComponent(toSelection.entrance)}`
+      );
+
+      if (!response.ok) {
+        const err = await response.json();
+        alert(`Error: ${err.error}`);
+        return;
+      }
+
+      const data = await response.json();
+      console.log("Route data:", data);
+      // TODO: Pass `data` to your MapDisplay component to visualize route
+      alert(`Route found! Total cost: ${data.totalCost}`);
+    } catch (err) {
+      console.error("Error fetching route:", err);
+      alert("Failed to fetch route. Check console for details.");
+    }
+  };
+
   return (
     <Container fluid className="p-4">
       <Row>
-        {/* Left side - Dropdowns */}
         <Col md={6} className="d-flex flex-column gap-4">
-          <DropdownButton id="from-button" title="Select your Starting Point">
-            <Dropdown.Item>RAC</Dropdown.Item>
-            <Dropdown.Item>Sherman Hall</Dropdown.Item>
-            <Dropdown.Item>Biology</Dropdown.Item>
-            <Dropdown.Item>ILSB</Dropdown.Item>
-            <Dropdown.Item>Commons</Dropdown.Item>
-            <Dropdown.Item>University Center</Dropdown.Item>
-            <Dropdown.Item>Sondheim Hall</Dropdown.Item>
-            <Dropdown.Item>Math & Psychology</Dropdown.Item>
-            <Dropdown.Item>Performing Arts and Humanities</Dropdown.Item>
-            <Dropdown.Item>Physics</Dropdown.Item>
-            <Dropdown.Item>Public Policy</Dropdown.Item>
-            <Dropdown.Item>AOK Library & Gallery</Dropdown.Item>
-          </DropdownButton>
+          {/* FROM Dropdown */}
+          <Dropdown>
+            <Dropdown.Toggle id="from-dropdown" variant="secondary">
+              {fromSelection.entrance
+                ? `From: ${fromSelection.entrance}`
+                : fromSelection.building
+                ? `From: ${fromSelection.building}`
+                : "Select Starting Point"}
+            </Dropdown.Toggle>
 
-          <DropdownButton id="to-button" title="Select your Destination">
-            <Dropdown.Item>RAC</Dropdown.Item>
-            <Dropdown.Item>Sherman Hall</Dropdown.Item>
-            <Dropdown.Item>Biology</Dropdown.Item>
-            <Dropdown.Item>ILSB</Dropdown.Item>
-            <Dropdown.Item>Commons</Dropdown.Item>
-            <Dropdown.Item>University Center</Dropdown.Item>
-            <Dropdown.Item>Sondheim Hall</Dropdown.Item>
-            <Dropdown.Item>Math & Psychology</Dropdown.Item>
-            <Dropdown.Item>Performing Arts and Humanities</Dropdown.Item>
-            <Dropdown.Item>Physics</Dropdown.Item>
-            <Dropdown.Item>Public Policy</Dropdown.Item>
-            <Dropdown.Item>AOK Library & Gallery</Dropdown.Item>
-          </DropdownButton>
+            <Dropdown.Menu>
+              {allBuildings.map((b) => (
+                <Dropdown key={b} drop="end">
+                  <Dropdown.Toggle as="div" className="dropdown-item">
+                    {b}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {buildingEntrances[b]?.length ? (
+                      buildingEntrances[b].map((e) => (
+                        <Dropdown.Item
+                          key={e}
+                          onClick={() =>
+                            setFromSelection({ building: b, entrance: e })
+                          }
+                        >
+                          {e}
+                        </Dropdown.Item>
+                      ))
+                    ) : (
+                      <Dropdown.Item
+                        onClick={() =>
+                          setFromSelection({ building: b, entrance: null })
+                        }
+                      >
+                        (Main)
+                      </Dropdown.Item>
+                    )}
+                  </Dropdown.Menu>
+                </Dropdown>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+
+          {/* TO Dropdown */}
+          <Dropdown>
+            <Dropdown.Toggle id="to-dropdown" variant="secondary">
+              {toSelection.entrance
+                ? `To: ${toSelection.entrance}`
+                : toSelection.building
+                ? `To: ${toSelection.building}`
+                : "Select Destination"}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              {allBuildings.map((b) => (
+                <Dropdown key={b} drop="end">
+                  <Dropdown.Toggle as="div" className="dropdown-item">
+                    {b}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {buildingEntrances[b]?.length ? (
+                      buildingEntrances[b].map((e) => (
+                        <Dropdown.Item
+                          key={e}
+                          onClick={() =>
+                            setToSelection({ building: b, entrance: e })
+                          }
+                        >
+                          {e}
+                        </Dropdown.Item>
+                      ))
+                    ) : (
+                      <Dropdown.Item
+                        onClick={() =>
+                          setToSelection({ building: b, entrance: null })
+                        }
+                      >
+                        (Main)
+                      </Dropdown.Item>
+                    )}
+                  </Dropdown.Menu>
+                </Dropdown>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+
+          {/* Submit Button */}
+          <Button variant="primary" onClick={handleSubmit}>
+            Find Route
+          </Button>
         </Col>
 
-        {/* Right side - MapDisplay with title */}
+        {/* Right side - MapDisplay */}
         <Col
           md={6}
           className="d-flex flex-column align-items-center justify-content-center"
@@ -291,100 +561,4 @@ export default function Homepage() {
   );
 }
 
-
-
-
-
-
-
-
-// import { useState, useEffect } from "react";
-// import { Container, Row, Col, Dropdown, DropdownButton } from "react-bootstrap";
-// import MapDisplay from "./MapDisplay";
-
-// interface Point {
-//   x: number;
-//   y: number;
-// }
-
-// export default function Homepage() {
-//   const [start, setStart] = useState<string | null>(null);
-//   const [end, setEnd] = useState<string | null>(null);
-//   const [path, setPath] = useState<Point[]>([]);
-
-//   // Example: dropdown options
-//   const locations = [
-//     "RAC",
-//     "Sherman Hall",
-//     "Biology",
-//     "ILSB",
-//     "Commons",
-//     "University Center",
-//     "Sondheim Hall",
-//     "Math & Psychology",
-//     "Performing Arts and Humanities",
-//     "Physics",
-//     "Public Policy",
-//     "AOK Library & Gallery",
-//   ];
-
-//   // When start or end changes, fetch path from backend
-//   useEffect(() => {
-//     if (!start || !end) return;
-
-//     // Example: fetch path from backend
-//     // Replace this with your real API call
-//     async function fetchPath() {
-//       try {
-//         // Example API call
-//         const res = await fetch(
-//           `/api/path?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`
-//         );
-//         const data = await res.json(); // expected [{x, y}, {x, y}, ...]
-//         setPath(data);
-//       } catch (err) {
-//         console.error("Failed to fetch path:", err);
-//       }
-//     }
-
-//     fetchPath();
-//   }, [start, end]);
-
-//   return (
-//     <Container fluid className="p-4">
-//       <Row>
-//         {/* Left side - Dropdowns */}
-//         <Col md={6} className="d-flex flex-column gap-4">
-//           <DropdownButton
-//             id="from-button"
-//             title={start || "Select your Starting Point"}
-//           >
-//             {locations.map((loc) => (
-//               <Dropdown.Item key={loc} onClick={() => setStart(loc)}>
-//                 {loc}
-//               </Dropdown.Item>
-//             ))}
-//           </DropdownButton>
-
-//           <DropdownButton
-//             id="to-button"
-//             title={end || "Select your Destination"}
-//           >
-//             {locations.map((loc) => (
-//               <Dropdown.Item key={loc} onClick={() => setEnd(loc)}>
-//                 {loc}
-//               </Dropdown.Item>
-//             ))}
-//           </DropdownButton>
-//         </Col>
-
-//         {/* Right side - Map */}
-//         <Col md={6} className="d-flex flex-column align-items-center justify-content-center">
-//           <h4 className="mb-3">Campus Map</h4>
-//           <MapDisplay path={path} />
-//         </Col>
-//       </Row>
-//     </Container>
-//   );
-// }
 
