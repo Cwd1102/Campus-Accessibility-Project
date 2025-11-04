@@ -108,4 +108,30 @@ router.get("/stats", async (req, res) => {
   }
 });
 
+router.patch("/clearcomment/:id", async (req, res) => {
+  try {
+    const db = await connectDB();
+    const reports = db.collection("survey");
+    const { id } = req.params;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ error: "Invalid survey id" });
+    }
+
+    const result = await reports.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { comments: "" } } // or {$unset: { comments: "" }} if you prefer removing the field
+    );
+
+    if (result.matchedCount === 0) {
+      return res.status(404).json({ error: "Survey not found" });
+    }
+
+    return res.json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
 module.exports = router;

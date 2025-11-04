@@ -140,6 +140,35 @@ export default function ViewSurveyPage() {
     }
   };
 
+  const handleDeleteComment = async (id: string) => {
+  const confirmed = window.confirm(
+    "Delete this comment? The numeric survey responses will be kept."
+  );
+  if (!confirmed) return;
+
+  try {
+    const res = await fetch(
+      `http://localhost:8080/survey/clearcomment/${id}`,
+      { method: "PATCH" }
+    );
+
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      throw new Error(body.error || `Failed to delete comment (${res.status})`);
+    }
+
+    // Update local state: clear comment for that survey
+    setCommentsPageData((prev) =>
+      prev.map((s) =>
+        s._id === id ? { ...s, comments: "" } : s
+      )
+    );
+  } catch (err: any) {
+    console.error(err);
+    setError(err.message || "Failed to delete comment.");
+  }
+};
+
   return (
     <Container className="py-10">
       <Row className="justify-content-center">
@@ -222,7 +251,7 @@ export default function ViewSurveyPage() {
                       <Col md={6} className="mb-4">
                         <h5 className="mb-3">Comments</h5>
                         <div className="table-responsive">
-                          <Table bordered hover size="sm" className="align-middle">
+                          {/* <Table bordered hover size="sm" className="align-middle">
                             <thead>
                               <tr>
                                 <th style={{ width: "20%" }}>Date</th>
@@ -256,7 +285,55 @@ export default function ViewSurveyPage() {
                                 })
                               )}
                             </tbody>
-                          </Table>
+                          </Table> */}
+                          <Table bordered hover size="sm" className="align-middle">
+                            <thead>
+                                <tr>
+                                <th style={{ width: "25%" }}>Date</th>
+                                <th>Comment</th>
+                                <th style={{ width: "15%" }}>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {visibleComments.length === 0 ? (
+                                <tr>
+                                    <td colSpan={3} className="text-muted text-center">
+                                    No comments on this page.
+                                    </td>
+                                </tr>
+                                ) : (
+                                visibleComments.map((survey) => {
+                                    const time = survey.timestamp
+                                    ? new Date(survey.timestamp).toLocaleDateString("en-US", {
+                                        year: "numeric",
+                                        month: "short",
+                                        day: "numeric",
+                                        })
+                                    : "Unknown date";
+
+                                    return (
+                                    <tr key={survey._id}>
+                                        <td>
+                                        <small className="text-muted">{time}</small>
+                                        </td>
+                                        <td style={{ whiteSpace: "pre-wrap" }}>
+                                        {survey.comments}
+                                        </td>
+                                        <td className="text-center">
+                                        <Button
+                                            variant="outline-danger"
+                                            size="sm"
+                                            onClick={() => handleDeleteComment(survey._id)}
+                                        >
+                                            Delete
+                                        </Button>
+                                        </td>
+                                    </tr>
+                                    );
+                                })
+                                )}
+                            </tbody>
+                            </Table>
                         </div>
 
                         <div className="d-flex justify-content-between mt-2">
