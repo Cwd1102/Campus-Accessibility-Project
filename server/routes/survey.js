@@ -64,3 +64,48 @@ router.get("/loadpage", async (req, res) => {
 });
 
 module.exports = router;
+
+/////////////////////////////
+router.get("/stats", async (req, res) => {
+  try {
+    const db = await connectDB();
+    const reports = db.collection("survey");
+
+    console.log("Incoming GET /survey/stats");
+
+    // Get all survey docs. For a huge DB you'd do aggregation,
+    // but this is fine for class/project scale.
+    const docs = await reports.find({ kind: "survey" }).toArray();
+
+    const total = docs.length;
+    if (total === 0) {
+      return res.json({
+        total: 0,
+        averages: [],
+      });
+    }
+
+    const numQuestions = docs[0].responses.length; // 10
+
+    // Sum scores per question
+    const sums = Array(numQuestions).fill(0);
+    for (const doc of docs) {
+      const resps = doc.responses || [];
+      for (let i = 0; i < numQuestions; i++) {
+        sums[i] += Number(resps[i] || 0);
+      }
+    }
+
+    const averages = sums.map((sum) => sum / total);
+
+    return res.json({
+      total,
+      averages, // e.g. [3, 3.5, 3, ...]
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+module.exports = router;
