@@ -143,8 +143,7 @@ export default function SurveyPage() {
                   onClose={() => setSubmitted(false)}
                   dismissible
                 >
-                  Thank you for your feedback! Your responses have been saved locally
-                  and downloaded as a CSV file.
+                  Thank you for your feedback! Your responses has been successfully submitted.
                 </Alert>
               )}
 
@@ -209,46 +208,7 @@ export default function SurveyPage() {
                 </Button>
               </div>
 
-              {/* Local preview */}
-              <hr className="my-4" />
-              <h6 className="mb-3">Saved Responses (Local Preview)</h6>
-              {entries.length === 0 ? (
-                <div className="text-muted">No responses yet.</div>
-              ) : (
-                <div className="table-responsive">
-                  <Table hover size="sm">
-                    <thead>
-                      <tr>
-                        <th>Time</th>
-                        <th>Summary (average score)</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {entries
-                        .slice()
-                        .reverse()
-                        .map((e) => {
-                          const scores = Object.values(e.ratings);
-                          const avg =
-                            scores.reduce((a, b) => a + b, 0) / scores.length;
-                          return (
-                            <tr key={e.id}>
-                              <td>{new Date(e.timestamp).toLocaleString()}</td>
-                              <td>{avg.toFixed(2)} / 5</td>
-                            </tr>
-                          );
-                        })}
-                    </tbody>
-                  </Table>
-                </div>
-              )}
-
-              <div className="mt-3 small text-muted">
-                Data is stored locally in your browser under key "
-                {STORAGE_KEY}" and downloaded as a CSV for reference.
-                In a real deployment, connect this to a backend database or
-                server endpoint for long-term storage.
-              </div>
+           
             </Card.Body>
           </Card>
         </Col>
