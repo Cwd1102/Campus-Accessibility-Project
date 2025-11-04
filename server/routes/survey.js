@@ -40,4 +40,27 @@ router.post("/create", async (req, res) => {
 
 });
 
+router.get("/loadpage", async (req, res) => {
+
+  const page = parseInt(req.query.page) || 1;
+  const limit = 10;
+  const skip = (page - 1) * limit;
+
+  try{
+    const db = await connectDB();
+    const reports = db.collection("survey");
+    console.log("Incoming POST /loadpage");
+
+    const docs = await reports.find({}).sort({timestamp: -1}).skip(skip).limit(limit).toArray();
+
+    res.json(docs);
+  }catch(err){
+    console.error(err);
+    res.status(500).json({error: err.message});
+
+  }
+
+
+});
+
 module.exports = router;
