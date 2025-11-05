@@ -24,8 +24,8 @@ const MapDisplay: React.FC<MapDisplayProps> = ({ path, className }) => {
   const lastPosRef = useRef({ x: 0, y: 0 });
 
   // Base size of the map & canvas (original shape)
-  const baseWidth = 600;
-  const baseHeight = 600;
+  const baseWidth = 800;
+  const baseHeight = 700;
 
   
 useEffect(() => {
@@ -106,8 +106,8 @@ useEffect(() => {
     setView((prev) => {
       let newScale = prev.scale * zoomFactor;
       
-      const minScale = 1;
-      const maxScale = 4;
+      const minScale = 2;
+      const maxScale = 7;
       newScale = Math.min(Math.max(newScale, minScale), maxScale);
 
       // Keep the point under the cursor fixed while zooming
@@ -213,7 +213,7 @@ useEffect(() => {
         // }}
       >
         <img
-          src="/campus_map.jpg"
+          src="/campus_map_new.jpg"
           alt="Campus Map"
           style={{
             width: "100%",
