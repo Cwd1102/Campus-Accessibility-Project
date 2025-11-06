@@ -6,7 +6,7 @@ import type { User } from "firebase/auth";
 import { auth } from "./firebase";
 
 import UmbcNavbar from "./components/UmbcNavbar";
-import Homepage from "./components/Homepage";
+import Homepage from "./Mapping/Homepage.tsx";
 import About from "./components/About";
 import Surveypage from "./components/Surveypage";
 import ReportObstruction from "./components/ReportObstruction";

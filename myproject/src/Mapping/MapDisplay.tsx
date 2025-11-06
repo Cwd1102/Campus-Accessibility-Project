@@ -159,6 +159,7 @@ useEffect(() => {
   return (
     <div
       ref={containerRef}
+      className={className}
     style={{
       position: "relative",
       width: "100%",
@@ -170,26 +171,11 @@ useEffect(() => {
       cursor: isPanning ? "grabbing" : "grab",
     }}
     onWheel={handleWheel}
-    onMouseDown={handleMouseDown}   // 👈 start panning
-    onMouseMove={handleMouseMove}  // 👈 move only when isPanning === true
-    onMouseUp={handleMouseUp}      // 👈 IMPORTANT: stop panning on release
-    onMouseLeave={handleMouseLeave} // 👈 also stop if they drag out of box
-      // ref={containerRef}
-      // className={className} 
-      // style={{
-      //   position: "relative",
-      //   width: `${baseWidth}px`,
-      //   height: `${baseHeight}px`,
-      //   overflow: "hidden", // important: this is your "big rectangle"
-      //   borderRadius: "8px",
-      //   border: "1px solid #ccc",
-      //   cursor: isPanning ? "grabbing" : "grab",
-      // }}
-      // onWheel={handleWheel}
-      // onMouseDown={handleMouseDown}
-      // onMouseMove={handleMouseMove}
-      // onMouseUp={handleMouseUp}
-      // onMouseLeave={handleMouseLeave}
+    onMouseDown={handleMouseDown}   
+    onMouseMove={handleMouseMove}  
+    onMouseUp={handleMouseUp}     
+    onMouseLeave={handleMouseLeave} 
+  
     >
       {/* This inner wrapper is what we zoom & pan */}
       <div
@@ -202,25 +188,17 @@ useEffect(() => {
         transform: `translate(${offsetX}px, ${offsetY}px) scale(${scale})`,
         transformOrigin: "0 0",
       }}
-        // style={{
-        //   width: baseWidth,
-        //   height: baseHeight,
-        //   position: "absolute",
-        //   top: 0,
-        //   left: 0,
-        //   transform: `translate(${offsetX}px, ${offsetY}px) scale(${scale})`,
-        //   transformOrigin: "0 0",
-        // }}
+       
       >
         <img
           src="/campus_map_new.jpg"
           alt="Campus Map"
           style={{
-            width: "100%",
+            width: "90%",
             height: "100%",
             borderRadius: "8px",
             display: "block",
-            objectFit: "contain", // or "cover" if you prefer cropping instead of stretching
+            objectFit: "cover", // or "cover" if you prefer cropping instead of stretching
           }}
         />
         <canvas

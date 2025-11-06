@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Container, Row, Col, Dropdown, Button } from "react-bootstrap";
-import MapDisplay from "./MapDisplay";
-
+import MapDisplay from "./OpenMap";
+import { LatLng } from "leaflet";
+  
 export default function Homepage() {
   const [fromSelection, setFromSelection] = useState<{ building: string; entrance: string | null }>({
     building: "",
@@ -61,9 +62,9 @@ export default function Homepage() {
       alert("Failed to fetch route. Check console for details.");
     }
   };
-
+  
   return (
-    <Container fluid className="p-4">
+    <Container fluid className="p-2">
       <Row>
         <Col md={3} className="d-flex flex-column gap-4">
           {/* FROM Dropdown */}
@@ -162,9 +163,14 @@ export default function Homepage() {
           md={6}
           className="d-flex flex-column align-items-center justify-content-center me-auto"
           //style={{ marginLeft: "400px" }}
+          style={{height:'700px', width: '800px'}}
         >
           <h4 className="mb-3 text-center">Campus Map</h4>
-          <MapDisplay className="align-items-left" />
+         {/* <MapDisplay className="align-items-left" /> */}
+         <MapDisplay center={new LatLng(39.2557, -76.7110)} routeSegments={[]}/>
+         
+          
+          
         </Col>
       </Row>  
     </Container>
