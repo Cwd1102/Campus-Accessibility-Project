@@ -1,62 +1,8 @@
-// import React from "react";
-// import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
-// import type { Feature, FeatureCollection, LineString } from "geojson";
-// import type { LatLngExpression } from "leaflet";
-// import "leaflet/dist/leaflet.css";
-
-// type SegmentFeature = Feature<LineString, { id: string }>;
-
-// interface MapDisplayProps {
-//   center: LatLngExpression;
-//   zoom?: number;
-//   /** Route segments to display. If empty, nothing is drawn. */
-//   routeSegments: SegmentFeature[];
-// }
-
-// const MapDisplay: React.FC<MapDisplayProps> = ({ center, zoom = 16, routeSegments }) => {
-//   const featureCollection: FeatureCollection | null =
-//     routeSegments.length > 0
-//       ? {
-//           type: "FeatureCollection",
-//           features: routeSegments,
-//         }
-//       : null;
-
-//   return (
-//     <MapContainer
-//        center={[39.2553, -76.711]} // campus center
-//         zoom={16}
-//         style={{
-//         height: "100vh",   // full screen height
-//         width: "100%",     // full width
-//   }}
-//     >
-//       {/* OpenStreetMap tiles */}
-//       <TileLayer
-//         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-//     attribution='&copy; OpenStreetMap contributors'
-//       />
-
-//       {/* Only draw route if we actually have segments */}
-//       {featureCollection && (
-//         <GeoJSON
-//           data={featureCollection}
-//           style={() => ({
-//             color: "#ff6600",
-//             weight: 5,
-//           })}
-//         />
-//       )}
-//     </MapContainer>
-//   );
-// };
-
-// export default MapDisplay;
-
 import React, { useRef } from "react";
-import { MapContainer, TileLayer, GeoJSON } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, Marker, Popup } from "react-leaflet";
 import type { Map as LeafletMap, LatLngExpression } from "leaflet";
 import type { Feature, FeatureCollection, LineString } from "geojson";
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
 type SegmentFeature = Feature<LineString, { id: string }>;
@@ -65,20 +11,50 @@ interface MapDisplayProps {
   center: LatLngExpression;           // original campus center
   zoom?: number;
   routeSegments: SegmentFeature[];
+  fromEntrance?: { position: LatLngExpression; name: string } | null;
+  toEntrance?: { position: LatLngExpression; name: string } | null;
 }
 
-const MapDisplay: React.FC<MapDisplayProps> = ({ center, zoom = 16, routeSegments }) => {
+const MapDisplay: React.FC<MapDisplayProps> = ({ 
+    center, 
+    zoom = 16, 
+    routeSegments, 
+    fromEntrance,
+    toEntrance,
+ }) => {
   const mapRef = useRef<LeafletMap | null>(null);
 
   const featureCollection: FeatureCollection | null =
     routeSegments.length > 0
       ? { type: "FeatureCollection", features: routeSegments }
       : null;
+    
+    // useEffect(() => {
+    //     if (!mapRef.current || !featureCollection) return;
+
+    //     const layer = L.geoJSON(featureCollection);
+    //     const bounds = layer.getBounds();
+    //     if (bounds.isValid()) {
+    //     mapRef.current.fitBounds(bounds, { padding: [30, 30] });
+    //     }
+    // }, [featureCollection]);
 
   const handleRecenter = () => {
     if (!mapRef.current) return;
     mapRef.current.setView(center, zoom);  // snap back to original view
   };
+
+  const blueIcon = L.icon({
+    iconUrl: "https://maps.gstatic.com/mapfiles/ms2/micons/blue-dot.png",
+    iconSize: [30, 30],
+    iconAnchor: [15, 30],
+  });
+
+   const redIcon = L.icon({
+    iconUrl: "https://maps.gstatic.com/mapfiles/ms2/micons/red-dot.png",
+    iconSize: [30, 30],
+    iconAnchor: [15, 30],
+   });
 
   return (
     <div
@@ -103,12 +79,31 @@ const MapDisplay: React.FC<MapDisplayProps> = ({ center, zoom = 16, routeSegment
           <GeoJSON
             data={featureCollection}
             style={() => ({
-              color: "#ff6600",
+              color: "#0066ff",
               weight: 5,
             })}
           />
         )}
+
+         {/* ⭐ NEW: entrance markers with clickable popups */}
+        {fromEntrance && (
+          <Marker position={fromEntrance.position} icon={redIcon}>
+            <Popup>
+              <strong>Start Entrance:</strong> {fromEntrance.name}
+            </Popup>
+          </Marker>
+        )}
+
+        {toEntrance && (
+          <Marker position={toEntrance.position} icon={blueIcon}>
+            <Popup>
+              <strong>Destination Entrance:</strong> {toEntrance.name}
+            </Popup>
+          </Marker>
+        )}
       </MapContainer>
+
+      
 
       {/* Recenter button in bottom-right */}
       <button
