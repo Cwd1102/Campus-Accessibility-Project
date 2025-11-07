@@ -232,10 +232,7 @@ export const SEGMENTS: Record<string, SegmentFeature> = {
       type: "LineString",
       coordinates: [
         [-76.714163, 39.254225], [-76.714209, 39.254141], //[eng door] [ite door]
-      ],
-    },
-  },
-
+      ],},},
 
 S24: {
     type: "Feature",
@@ -244,9 +241,7 @@ S24: {
       type: "LineString",
       coordinates: [
         [-76.714477,39.255739, ], [-76.715542, 39.256034], //[inter w 4] [inter w 25]
-      ],
-    },
-  },
+      ],},},
 
   S25: {
     type: "Feature",
@@ -266,9 +261,7 @@ S24: {
       type: "LineString",
       coordinates: [
         [-76.715636, 39.255851], [-76.714630, 39.255564], //[inter w 25] [inter w 17]
-      ],
-    },
-  },
+      ],},},
 
   S27: {
     type: "Feature",
@@ -277,8 +270,8 @@ S24: {
       type: "LineString",
       coordinates: [
         [-76.715636, 39.255851], [-76.715354, 39.255668], [-76.715389,39.255599], //[inter w 25] [PAHB 2N door]
-      ],
-    },
-  },
+      ], }, },
+
+    
 };
 
