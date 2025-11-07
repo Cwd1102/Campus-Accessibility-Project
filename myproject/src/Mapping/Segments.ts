@@ -164,7 +164,7 @@ export const SEGMENTS: Record<string, SegmentFeature> = {
     geometry: {
       type: "LineString",
       coordinates: [
-        [-76.714630, 39.255564], [-76.714083, 39.255423],
+        [-76.714630, 39.255564], [-76.714083, 39.255423], //[interwith 17] [interwith 4,5,16,6]
       ],
     },
   },
@@ -175,7 +175,7 @@ export const SEGMENTS: Record<string, SegmentFeature> = {
     geometry: {
       type: "LineString",
       coordinates: [
-        [-76.714748, 39.255311], [-76.714748, 39.255311],
+        [-76.714748, 39.255311], [-76.714630, 39.255564], //[PAHB door] , inter w 17
       ],
     },
   },
@@ -186,7 +186,7 @@ export const SEGMENTS: Record<string, SegmentFeature> = {
     geometry: {
       type: "LineString",
       coordinates: [
-         [-76.714555, 39.255194], [-76.714748, 39.255311],[-76.714783, 39.255240],
+         [-76.714555, 39.255194], [-76.714748, 39.255311],//[-76.714783, 39.255240], //[]..[PAHB door]
       ],
     },
   },
@@ -235,4 +235,50 @@ export const SEGMENTS: Record<string, SegmentFeature> = {
       ],
     },
   },
+
+
+S24: {
+    type: "Feature",
+    properties: { id: "S24" },
+    geometry: {
+      type: "LineString",
+      coordinates: [
+        [-76.714477,39.255739, ], [-76.715542, 39.256034], //[inter w 4] [inter w 25]
+      ],
+    },
+  },
+
+  S25: {
+    type: "Feature",
+    properties: { id: "S25" },
+    geometry: {
+      type: "LineString",
+      coordinates: [
+        [-76.715542, 39.256034], [-76.715636, 39.255851], //[inter w 24] [inter w 26,7]
+      ],
+    },
+  },
+
+    S26: {
+    type: "Feature",
+    properties: { id: "S26" },
+    geometry: {
+      type: "LineString",
+      coordinates: [
+        [-76.715636, 39.255851], [-76.714630, 39.255564], //[inter w 25] [inter w 17]
+      ],
+    },
+  },
+
+  S27: {
+    type: "Feature",
+    properties: { id: "S27" },
+    geometry: {
+      type: "LineString",
+      coordinates: [
+        [-76.715636, 39.255851], [-76.715354, 39.255668], [-76.715389,39.255599], //[inter w 25] [PAHB 2N door]
+      ],
+    },
+  },
 };
+

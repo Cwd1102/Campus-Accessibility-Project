@@ -4,6 +4,7 @@ import type { Map as LeafletMap, LatLngExpression } from "leaflet";
 import type { Feature, FeatureCollection, LineString } from "geojson";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { AMENITIES } from "./Amenities"; 
 
 type SegmentFeature = Feature<LineString, { id: string }>;
 
@@ -13,6 +14,7 @@ interface MapDisplayProps {
   routeSegments: SegmentFeature[];
   fromEntrance?: { position: LatLngExpression; name: string } | null;
   toEntrance?: { position: LatLngExpression; name: string } | null;
+   showAmenities?: boolean; 
 }
 
 const MapDisplay: React.FC<MapDisplayProps> = ({ 
@@ -21,6 +23,7 @@ const MapDisplay: React.FC<MapDisplayProps> = ({
     routeSegments, 
     fromEntrance,
     toEntrance,
+    showAmenities = false, 
  }) => {
   const mapRef = useRef<LeafletMap | null>(null);
 
@@ -55,6 +58,31 @@ const MapDisplay: React.FC<MapDisplayProps> = ({
     iconSize: [30, 30],
     iconAnchor: [15, 30],
    });
+
+   const elevatorIcon = L.divIcon({
+    className: "amenity-icon amenity-elevator",
+    html: "🛗",
+    iconSize: [40, 40],
+    iconAnchor: [12, 12],
+  });
+
+  const parkingIcon = L.divIcon({
+    className: "amenity-icon amenity-parking",
+    html: "♿",
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+  });
+
+  const getAmenityIcon = (type: string) => {
+    switch (type) {
+      case "elevator":
+        return elevatorIcon;
+      case "accessible_parking":
+        return parkingIcon;
+      default:
+        return elevatorIcon;
+    }
+  };
 
   return (
     <div
@@ -101,6 +129,21 @@ const MapDisplay: React.FC<MapDisplayProps> = ({
             </Popup>
           </Marker>
         )}
+
+        {showAmenities && AMENITIES.map((a) => (
+            <Marker
+              key={a.id}
+              position={a.position}
+              icon={getAmenityIcon(a.type)}
+            >
+              <Popup>
+                <strong>{a.label}</strong>
+                <br />
+                <span>Type: {a.type.replace("_", " ")}</span>
+              </Popup>
+            </Marker>
+          ))}
+
       </MapContainer>
 
       

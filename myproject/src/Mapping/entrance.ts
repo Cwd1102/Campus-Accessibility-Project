@@ -7,17 +7,16 @@ export interface EntranceMarker {
 }
 
 const ENTRANCE_COORDS: Record<string, LatLngExpression> = {
-  "FA_1_N": [39.2560, -76.7111],
-  "FA_2_C": [39.2556, -76.7109],
-  "FA_1_S": [39.2552, -76.7110],
-  "FA_0_E": [39.2554, -76.7105],
+  "FA_1_N": [39.255394, -76.713452],
+  "FA_2_C": [39.255140, -76.713734],
+  "FA_1_S": [39.254891,-76.713825],
+  "FA_0_E": [0,0],
   "PAHB_1_N": [39.255240, -76.714783],
-  "PAHB_1_E": [39.255240, -76.714783],
-  "PAHB_2_N": [39.2575, -76.7139],
+  "PAHB_1_E": [39.255138, -76.714633],
+  "PAHB_2_N": [39.255599, -76.715389],
   "ENG_2_W": [39.254677, -76.714281],
-  "ITE_3_W": [39.2553, -76.7128],
-  "ITE_1_E": [39.2551, -76.7121],
-  // ...
+  "ITE_3_W": [39.254185, -76.714466],
+  "ITE_1_E": [0,0],
 };
 
 export function getEntranceMarker(
@@ -28,7 +27,7 @@ export function getEntranceMarker(
   if (!position) return null;
 
   return {
-    name: entranceId,   // ⬅️ this will be used in the Popup
+    name: entranceId,  
     position,
   };
 }
