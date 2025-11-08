@@ -50,6 +50,8 @@ export const AMENITIES: Amenity[] = [
     label: "Fine Arts Elevator ",
   },
 
+  
+
 
   //Accessibe Parking Lots
   {
