@@ -346,7 +346,7 @@ const MapDisplay: React.FC<MapDisplayProps> = ({
       <MapContainer
         center={center}
         zoom={zoom}
-        minZoom={14}              // optional: don't zoom out to whole world
+        minZoom={15}              // optional: don't zoom out to whole world
         maxBounds={campusBounds}  // ⬅️ big box, not tight
         maxBoundsViscosity={1.0}  // hard stop *only* at that big box edge
         ref={mapRef}
