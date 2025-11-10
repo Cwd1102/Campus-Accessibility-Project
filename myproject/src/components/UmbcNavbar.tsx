@@ -87,10 +87,10 @@ export default function UmbcNavbar() {
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav">
               <Nav className="ms-auto d-flex align-items-center flex-nowrap gap-2">
-                <Nav.Link href="homepage">Home</Nav.Link>
-                <Nav.Link href="about">About</Nav.Link>
-                <Nav.Link href="ReportObstruction">Report Obstruction</Nav.Link>
-                <Nav.Link href="survey">Survey</Nav.Link>
+                <Nav.Link href="homepage"className="text-light">Home</Nav.Link>
+                <Nav.Link href="about" className="text-light">About</Nav.Link>
+                <Nav.Link href="ReportObstruction"className="text-light">Report Obstruction</Nav.Link>
+                <Nav.Link href="survey"className="text-light">Survey</Nav.Link>
                  {!user ?(
                 <Link to="/LoginPage">
                   <LoginButton variant="outline-light">Login</LoginButton>
@@ -98,7 +98,7 @@ export default function UmbcNavbar() {
                 ) : (
                 <>
                  <Link to="/ManageObstruction">
-                  <Nav.Link href="ManageObstruction"> Manage Obstructions</Nav.Link>
+                  <Nav.Link href="ManageObstruction" className="text-light"> Manage Obstructions</Nav.Link>
                 </Link>
                 {/* <span className="text-light me-2">{user.email}</span> */}
                  <LoginButton variant="outline-light" onClick={handleLogout}>Logout</LoginButton>
