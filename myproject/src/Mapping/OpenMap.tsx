@@ -1,68 +1,78 @@
 // import React, { useRef } from "react";
-// import { MapContainer, TileLayer, GeoJSON, Marker, Popup } from "react-leaflet";
+// import {
+//   MapContainer,
+//   TileLayer,
+//   GeoJSON,
+//   Marker,
+//   Tooltip,
+// } from "react-leaflet";
 // import type { Map as LeafletMap, LatLngExpression } from "leaflet";
-// import type { Feature, FeatureCollection, LineString } from "geojson";
 // import L from "leaflet";
+// import type { Feature, FeatureCollection, LineString } from "geojson";
 // import "leaflet/dist/leaflet.css";
-// import { AMENITIES } from "./Amenities"; 
+// import type { EntranceMarker } from "./entrance";
+// import { AMENITIES } from "./Amenities"; // if you have this; otherwise remove showAmenities logic
 
-// type SegmentFeature = Feature<LineString, { id: string }>;
+// export type SegmentFeature = Feature<LineString, { id: string }>;
 
 // interface MapDisplayProps {
-//   center: LatLngExpression;           // original campus center
+//   center: LatLngExpression;
 //   zoom?: number;
 //   routeSegments: SegmentFeature[];
-//   fromEntrance?: { position: LatLngExpression; name: string } | null;
-//   toEntrance?: { position: LatLngExpression; name: string } | null;
-//    showAmenities?: boolean; 
+//    routeVersion?: number;  
+//   fromEntrance?: EntranceMarker | null;
+//   toEntrance?: EntranceMarker | null;
+//   showAmenities?: boolean;
+//   entrances: EntranceMarker[]; // ALL entrances, always shown
+//   onEntranceClick?: (name: string) => void;
 // }
 
-// const MapDisplay: React.FC<MapDisplayProps> = ({ 
-//     center, 
-//     zoom = 16, 
-//     routeSegments, 
-//     fromEntrance,
-//     toEntrance,
-//     showAmenities = false, 
-//  }) => {
+// const MapDisplay: React.FC<MapDisplayProps> = ({
+//   center,
+//   zoom = 16,
+//   routeSegments,
+//   routeVersion,
+//   fromEntrance,
+//   toEntrance,
+//   showAmenities = false,
+//   entrances,
+//   onEntranceClick,
+// }) => {
 //   const mapRef = useRef<LeafletMap | null>(null);
 
 //   const featureCollection: FeatureCollection | null =
 //     routeSegments.length > 0
 //       ? { type: "FeatureCollection", features: routeSegments }
 //       : null;
-    
-//     // useEffect(() => {
-//     //     if (!mapRef.current || !featureCollection) return;
-
-//     //     const layer = L.geoJSON(featureCollection);
-//     //     const bounds = layer.getBounds();
-//     //     if (bounds.isValid()) {
-//     //     mapRef.current.fitBounds(bounds, { padding: [30, 30] });
-//     //     }
-//     // }, [featureCollection]);
 
 //   const handleRecenter = () => {
 //     if (!mapRef.current) return;
-//     mapRef.current.setView(center, zoom);  // snap back to original view
+//     mapRef.current.setView(center, zoom);
 //   };
+
+//   // Icons
+//   const redIcon = L.icon({
+//     iconUrl: "https://maps.gstatic.com/mapfiles/ms2/micons/red-dot.png",
+//     iconSize: [26, 26],
+//     iconAnchor: [13, 26],
+//   });
 
 //   const blueIcon = L.icon({
 //     iconUrl: "https://maps.gstatic.com/mapfiles/ms2/micons/blue-dot.png",
-//     iconSize: [30, 30],
-//     iconAnchor: [15, 30],
+//     iconSize: [26, 26],
+//     iconAnchor: [13, 26],
 //   });
 
-//    const redIcon = L.icon({
-//     iconUrl: "https://maps.gstatic.com/mapfiles/ms2/micons/red-dot.png",
-//     iconSize: [30, 30],
-//     iconAnchor: [15, 30],
-//    });
+//   const greyIcon = L.icon({
+//     iconUrl: "https://maps.gstatic.com/mapfiles/ms2/micons/yellow-dot.png",
+//     iconSize: [22, 22],
+//     iconAnchor: [11, 22],
+//   });
 
-//    const elevatorIcon = L.divIcon({
+//   const elevatorIcon = L.divIcon({
 //     className: "amenity-icon amenity-elevator",
 //     html: "🛗",
-//     iconSize: [40, 40],
+//     iconSize: [24, 24],
 //     iconAnchor: [12, 12],
 //   });
 
@@ -73,29 +83,43 @@
 //     iconAnchor: [12, 12],
 //   });
 
+//   const rampIcon = L.divIcon({
+//     className: "amenity-icon amenity-ramp",
+//     html: "↗",
+//     iconSize: [24, 24],
+//     iconAnchor: [12, 12],
+//   });
+
 //   const getAmenityIcon = (type: string) => {
 //     switch (type) {
 //       case "elevator":
 //         return elevatorIcon;
 //       case "accessible_parking":
 //         return parkingIcon;
+//       case "ramp":
+//         return rampIcon;
 //       default:
 //         return elevatorIcon;
 //     }
 //   };
+
+//   ///
+//   ///
+//   ///
+//   ///
 
 //   return (
 //     <div
 //       style={{
 //         position: "relative",
 //         width: "100%",
-//         height: "100%", // parent must give this component a real height
+//         height: "100%",
 //       }}
 //     >
 //       <MapContainer
 //         center={center}
-//         zoom={zoom}
-//         ref={mapRef}   // ⬅️ use ref instead of whenCreated
+//         zoom={zoom} 
+//         ref={mapRef}
 //         style={{ width: "100%", height: "100%" }}
 //       >
 //         <TileLayer
@@ -103,8 +127,10 @@
 //           attribution='&copy; OpenStreetMap contributors'
 //         />
 
+//         {/* Route */}
 //         {featureCollection && (
 //           <GeoJSON
+//             key={routeVersion}
 //             data={featureCollection}
 //             style={() => ({
 //               color: "#0066ff",
@@ -113,42 +139,44 @@
 //           />
 //         )}
 
-//          {/* ⭐ NEW: entrance markers with clickable popups */}
-//         {fromEntrance && (
-//           <Marker position={fromEntrance.position} icon={redIcon}>
-//             <Popup>
-//               <strong>Start Entrance:</strong> {fromEntrance.name}
-//             </Popup>
-//           </Marker>
-//         )}
-
-//         {toEntrance && (
-//           <Marker position={toEntrance.position} icon={blueIcon}>
-//             <Popup>
-//               <strong>Destination Entrance:</strong> {toEntrance.name}
-//             </Popup>
-//           </Marker>
-//         )}
-
-//         {showAmenities && AMENITIES.map((a) => (
+//         {/* Amenities (optional, toggled) */}
+//         {showAmenities &&
+//           AMENITIES.map((a) => (
 //             <Marker
 //               key={a.id}
 //               position={a.position}
 //               icon={getAmenityIcon(a.type)}
 //             >
-//               <Popup>
-//                 <strong>{a.label}</strong>
-//                 <br />
-//                 <span>Type: {a.type.replace("_", " ")}</span>
-//               </Popup>
+//               <Tooltip direction="top" offset={[0, -10]} opacity={0.9}>
+//                 {a.label}
+//               </Tooltip>
 //             </Marker>
 //           ))}
 
+//         {/* ALL entrances, always visible */}
+//         {entrances.map((e) => {
+//           const isFrom = fromEntrance && fromEntrance.name === e.name;
+//           const isTo = toEntrance && toEntrance.name === e.name;
+//           const icon = isFrom ? redIcon : isTo ? blueIcon : greyIcon;
+
+//           return (
+//             <Marker
+//               key={e.name}
+//               position={e.position}
+//               icon={icon}
+//               eventHandlers={{
+//                 click: () => onEntranceClick && onEntranceClick(e.name),
+//               }}
+//             >
+//               <Tooltip direction="top" offset={[0, -10]} opacity={0.9}>
+//                 {e.name}
+//               </Tooltip>
+//             </Marker>
+//           );
+//         })}
 //       </MapContainer>
 
-      
-
-//       {/* Recenter button in bottom-right */}
+//       {/* Recenter button */}
 //       <button
 //         type="button"
 //         onClick={handleRecenter}
@@ -175,7 +203,7 @@
 
 // export default MapDisplay;
 
-// OpenMap.tsx
+
 
 import React, { useRef } from "react";
 import {
@@ -185,12 +213,16 @@ import {
   Marker,
   Tooltip,
 } from "react-leaflet";
-import type { Map as LeafletMap, LatLngExpression } from "leaflet";
+import type {
+  Map as LeafletMap,
+  LatLngExpression,
+  LatLngBoundsExpression,
+} from "leaflet";
 import L from "leaflet";
 import type { Feature, FeatureCollection, LineString } from "geojson";
 import "leaflet/dist/leaflet.css";
 import type { EntranceMarker } from "./entrance";
-import { AMENITIES } from "./Amenities"; // if you have this; otherwise remove showAmenities logic
+import { AMENITIES } from "./Amenities";
 
 export type SegmentFeature = Feature<LineString, { id: string }>;
 
@@ -198,13 +230,26 @@ interface MapDisplayProps {
   center: LatLngExpression;
   zoom?: number;
   routeSegments: SegmentFeature[];
-   routeVersion?: number;  
+  routeVersion?: number;
   fromEntrance?: EntranceMarker | null;
   toEntrance?: EntranceMarker | null;
   showAmenities?: boolean;
   entrances: EntranceMarker[]; // ALL entrances, always shown
   onEntranceClick?: (name: string) => void;
 }
+
+// Normalize LatLngExpression → [lat, lng]
+const toLatLngTuple = (c: LatLngExpression): [number, number] => {
+  if (Array.isArray(c)) {
+    return [c[0], c[1]];
+  }
+  const anyC = c as any;
+  if (typeof anyC.lat === "number" && typeof anyC.lng === "number") {
+    return [anyC.lat, anyC.lng];
+  }
+  const ll = c as L.LatLng;
+  return [ll.lat, ll.lng];
+};
 
 const MapDisplay: React.FC<MapDisplayProps> = ({
   center,
@@ -223,6 +268,14 @@ const MapDisplay: React.FC<MapDisplayProps> = ({
     routeSegments.length > 0
       ? { type: "FeatureCollection", features: routeSegments }
       : null;
+
+  // 🔒 Big bounding box around campus (several km)
+  const [lat, lng] = toLatLngTuple(center);
+  const padding = 0.01; // ≈ 10–12km box around center — campus is tiny inside this
+  const campusBounds: LatLngBoundsExpression = [
+    [lat - padding, lng - padding],
+    [lat + padding, lng + padding],
+  ];
 
   const handleRecenter = () => {
     if (!mapRef.current) return;
@@ -293,6 +346,9 @@ const MapDisplay: React.FC<MapDisplayProps> = ({
       <MapContainer
         center={center}
         zoom={zoom}
+        minZoom={14}              // optional: don't zoom out to whole world
+        maxBounds={campusBounds}  // ⬅️ big box, not tight
+        maxBoundsViscosity={1.0}  // hard stop *only* at that big box edge
         ref={mapRef}
         style={{ width: "100%", height: "100%" }}
       >
@@ -365,7 +421,7 @@ const MapDisplay: React.FC<MapDisplayProps> = ({
           backgroundColor: "#0d6efd",
           color: "white",
           fontSize: "0.9rem",
-          boxShadow: "0 2px 6px rgba(0,0,0,0.25)",
+          boxShadow: "0 2px 6px rgba(0, 0, 0, 0.25)",
           cursor: "pointer",
         }}
       >
