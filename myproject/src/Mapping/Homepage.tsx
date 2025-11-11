@@ -240,7 +240,7 @@
 // }
 
 
-// Homepage.tsx
+
 import { useState } from "react";
 import { Container, Row, Col, Dropdown, Button, Form } from "react-bootstrap";
 import MapDisplay from "./OpenMap";
@@ -252,6 +252,7 @@ import {
   getAllEntranceMarkers,
 } from "./entrance";
 import ElevatorInstructions from "./ElevatorInstructions";
+import type { RouteLeg } from "./ElevatorInstructions";
 
 export default function Homepage() {
   const [fromSelection, setFromSelection] = useState<{
@@ -273,6 +274,9 @@ export default function Homepage() {
   const [routeSegments, setRouteSegments] = useState<SegmentFeature[]>([]);
   const [routeVersion, setRouteVersion] = useState(0);
   const [showAmenities, setShowAmenities] = useState(false);
+
+  // for elevator instructions
+  const [elevatorLegs, setElevatorLegs] = useState<RouteLeg[]>([]);
 
   const buildingEntrances: Record<string, string[]> = {
     "Fine Arts": ["FA_1_N", "FA_2_C", "FA_1_S", "FA_0_E"],
@@ -344,6 +348,13 @@ export default function Homepage() {
       const data = await response.json();
       console.log("Route data:", data);
 
+      // store legs for elevator instructions
+      if (data.legs) {
+        setElevatorLegs(data.legs as RouteLeg[]);
+      } else {
+        setElevatorLegs([]);
+      }
+
       const newRouteSegments: SegmentFeature[] = data.route
         .map((segmentId: string) => SEGMENTS[segmentId])
         .filter(
@@ -355,7 +366,7 @@ export default function Homepage() {
       }
 
       setRouteSegments(newRouteSegments);
-      setRouteVersion((v) => v + 1); 
+      setRouteVersion((v) => v + 1);
 
       alert(`Route found! Total cost: ${data.totalCost}`);
     } catch (err) {
@@ -367,7 +378,7 @@ export default function Homepage() {
   return (
     <Container fluid className="p-2">
       <Row>
-        {/* LEFT: controls */}
+        {/* LEFT: controls + directions */}
         <Col md={3} className="d-flex flex-column gap-4">
           {/* FROM Dropdown with clear X */}
           <div className="d-flex align-items-center gap-2">
@@ -483,6 +494,13 @@ export default function Homepage() {
           >
             Find Route
           </Button>
+
+          {/* Elevator directions under the dropdowns */}
+          {elevatorLegs.length > 0 && (
+            <div className="mt-2">
+              <ElevatorInstructions legs={elevatorLegs} />
+            </div>
+          )}
         </Col>
 
         {/* CENTER: Map with checkbox on RIGHT side */}
@@ -504,19 +522,13 @@ export default function Homepage() {
             <MapDisplay
               center={new LatLng(39.2557, -76.711)}
               routeSegments={routeSegments}
-              routeVersion={routeVersion} 
+              routeVersion={routeVersion}
               fromEntrance={getEntranceMarker(fromSelection.entrance)}
               toEntrance={getEntranceMarker(toSelection.entrance)}
               showAmenities={showAmenities}
               entrances={allEntranceMarkers}
               onEntranceClick={handleEntranceClick}
             />
-            <ElevatorInstructions
-              fromEntrance={fromSelection.entrance}
-              toEntrance={toSelection.entrance}
-              routeSegments={routeSegments}   // ✅ add this
-            />
-
 
             {/* Checkbox on the RIGHT side of map */}
             <div

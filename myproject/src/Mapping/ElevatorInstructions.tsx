@@ -190,21 +190,99 @@
 
 
 // ElevatorInstructions.tsx
-import React from "react";
-import type { SegmentFeature } from "./Segments";
+// import React from "react";
+// import type { SegmentFeature } from "./Segments";
 
-interface ElevatorInstructionsProps {
-  fromEntrance: string | null;
-  toEntrance: string | null;
-  routeSegments: SegmentFeature[];
+// interface ElevatorInstructionsProps {
+//   fromEntrance: string | null;
+//   toEntrance: string | null;
+//   routeSegments: SegmentFeature[];
+// }
+
+// const ElevatorInstructions: React.FC<ElevatorInstructionsProps> = ({
+//   fromEntrance,
+//   toEntrance,
+//   routeSegments,
+// }) => {
+//   if (!fromEntrance || !toEntrance || routeSegments.length === 0) return null;
+
+//   return (
+//     <div
+//       style={{
+//         marginTop: "0.5rem",
+//         padding: "0.5rem",
+//         border: "1px solid #ccc",
+//         borderRadius: "4px",
+//         backgroundColor: "white",
+//         maxWidth: "300px",
+//       }}
+//     >
+//       <h6>Entrance Guidance</h6>
+//       {routeSegments.map((segment) => {
+//         // Extract floor numbers from IDs (assumes format ENG_2_W)
+//         const fromFloorMatch = fromEntrance.match(/_(\d+)_/);
+//         const toFloorMatch = toEntrance.match(/_(\d+)_/);
+//         const fromFloor = fromFloorMatch ? parseInt(fromFloorMatch[1]) : null;
+//         const toFloor = toFloorMatch ? parseInt(toFloorMatch[1]) : null;
+
+//         let instruction = "Proceed through the segment.";
+//         if (fromFloor !== null && toFloor !== null) {
+//           if (fromFloor > toFloor) instruction = "Take the Elevator down.";
+//           else if (fromFloor < toFloor) instruction = "Take the Elevator up.";
+//           else instruction = "Move between doors on the same floor.";
+//         }
+
+//         // Special case for segment IDs in the 1000s
+//         if (parseInt(segment.properties.id.replace(/\D/g, "")) >= 1000) {
+//           instruction = "This segment is between doors; follow the path.";
+//         }
+
+//         return (
+//           <div key={segment.properties.id} style={{ marginBottom: "0.25rem" }}>
+//             <strong>{segment.properties.id}:</strong> {instruction}
+//           </div>
+//         );
+//       })}
+//     </div>
+//   );
+// };
+
+// export default ElevatorInstructions;
+
+import React from "react";
+
+export interface RouteLeg {
+  segment: string; // e.g. "S1017"
+  from: string;    // e.g. "CHM_2_N"
+  to: string;      // e.g. "CHM_0_N"
+  cost: {
+    low: number;
+    high: number;
+  };
 }
 
-const ElevatorInstructions: React.FC<ElevatorInstructionsProps> = ({
-  fromEntrance,
-  toEntrance,
-  routeSegments,
-}) => {
-  if (!fromEntrance || !toEntrance || routeSegments.length === 0) return null;
+interface ElevatorInstructionsProps {
+  legs: RouteLeg[];
+}
+
+const ElevatorInstructions: React.FC<ElevatorInstructionsProps> = ({ legs }) => {
+  if (!legs || legs.length === 0) return null;
+
+  const elevatorLegs = legs.filter((leg) => {
+    const numericPart = parseInt(leg.segment.replace(/\D/g, ""), 10);
+    return !isNaN(numericPart) && numericPart >= 1000;
+  });
+
+  if (elevatorLegs.length === 0) return null;
+
+  const parseFloor = (id: string): number | null => {
+    const match = id.match(/_(\d+)_/);
+    return match ? parseInt(match[1], 10) : null;
+  };
+
+  const getBuildingCode = (id: string): string => {
+    return id.split("_")[0] || "";
+  };
 
   return (
     <div
@@ -214,32 +292,30 @@ const ElevatorInstructions: React.FC<ElevatorInstructionsProps> = ({
         border: "1px solid #ccc",
         borderRadius: "4px",
         backgroundColor: "white",
-        maxWidth: "300px",
+        maxWidth: "320px",
       }}
     >
-      <h6>Entrance Guidance</h6>
-      {routeSegments.map((segment) => {
-        // Extract floor numbers from IDs (assumes format ENG_2_W)
-        const fromFloorMatch = fromEntrance.match(/_(\d+)_/);
-        const toFloorMatch = toEntrance.match(/_(\d+)_/);
-        const fromFloor = fromFloorMatch ? parseInt(fromFloorMatch[1]) : null;
-        const toFloor = toFloorMatch ? parseInt(toFloorMatch[1]) : null;
+      <h6>Elevator Instructions</h6>
+      {elevatorLegs.map((leg) => {
+        const fromFloor = parseFloor(leg.from);
+        const toFloor = parseFloor(leg.to);
+        const building = getBuildingCode(leg.from);
 
-        let instruction = "Proceed through the segment.";
+        let text = "Use the elevator between floors.";
+
         if (fromFloor !== null && toFloor !== null) {
-          if (fromFloor > toFloor) instruction = "Take the stairs down.";
-          else if (fromFloor < toFloor) instruction = "Take the stairs up.";
-          else instruction = "Move between doors on the same floor.";
-        }
-
-        // Special case for segment IDs in the 1000s
-        if (parseInt(segment.properties.id.replace(/\D/g, "")) >= 1000) {
-          instruction = "This segment is between doors; follow the path.";
+          if (fromFloor < toFloor) {
+            text = `Take the elevator up from floor ${fromFloor} to ${toFloor} in ${building}.`;
+          } else if (fromFloor > toFloor) {
+            text = `Take the elevator down from floor ${fromFloor} to ${toFloor} in ${building}.`;
+          } else if (fromFloor == toFloor){
+            text = `Use this door to enter the building to reach your destination.`;
+          }
         }
 
         return (
-          <div key={segment.properties.id} style={{ marginBottom: "0.25rem" }}>
-            <strong>{segment.properties.id}:</strong> {instruction}
+          <div key={leg.segment} style={{ marginBottom: "0.25rem" }}>
+            {text}
           </div>
         );
       })}
