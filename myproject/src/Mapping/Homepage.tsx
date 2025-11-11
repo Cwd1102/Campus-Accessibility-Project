@@ -251,6 +251,7 @@ import {
   getEntranceMarker,
   getAllEntranceMarkers,
 } from "./entrance";
+import ElevatorInstructions from "./ElevatorInstructions";
 
 export default function Homepage() {
   const [fromSelection, setFromSelection] = useState<{
@@ -510,6 +511,12 @@ export default function Homepage() {
               entrances={allEntranceMarkers}
               onEntranceClick={handleEntranceClick}
             />
+            <ElevatorInstructions
+              fromEntrance={fromSelection.entrance}
+              toEntrance={toSelection.entrance}
+              routeSegments={routeSegments}   // ✅ add this
+            />
+
 
             {/* Checkbox on the RIGHT side of map */}
             <div
