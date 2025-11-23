@@ -130,7 +130,7 @@ export default function Homepage() {
           {/* FROM Dropdown with clear X */}
           <div className="d-flex align-items-center gap-2">
             <Dropdown>
-              <Dropdown.Toggle id="from-dropdown" variant="secondary">
+              <Dropdown.Toggle id="from-dropdown" variant="secondary" style={{ backgroundColor: '#c91b1bff', color: 'white', borderColor: '#dc2626' }}>
                 {fromSelection.entrance
                   ? `From: ${fromSelection.entrance}`
                   : fromSelection.building
@@ -185,7 +185,7 @@ export default function Homepage() {
           {/* TO Dropdown with clear X */}
           <div className="d-flex align-items-center gap-2">
             <Dropdown>
-              <Dropdown.Toggle id="to-dropdown" variant="secondary">
+              <Dropdown.Toggle id="to-dropdown" variant="secondary" style={{ backgroundColor: '#3751d0ff', color: 'white', borderColor: '#3751d0ff' }}>
                 {toSelection.entrance
                   ? `To: ${toSelection.entrance}`
                   : toSelection.building
@@ -237,7 +237,7 @@ export default function Homepage() {
           <Button
             variant="primary"
             onClick={handleSubmit}
-            style={{ width: "fit-content" }}
+            style={{ width: "fit-content", backgroundColor: '#8a9191ff', color: 'white', borderColor: '#8a9191ff' }}
           >
             Find Route
           </Button>

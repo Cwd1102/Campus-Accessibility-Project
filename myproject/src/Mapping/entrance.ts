@@ -70,6 +70,7 @@ export const ENTRANCE_COORDS: Record<string, LatLngExpression> = {
   PHYS_1_N: [39.254742, -76.709687],
   PHYS_1_S: [39.254244, -76.709885],
   COMG_1_W: [39.253864, -76.710071],
+  COMG_1_E: [39.253598, -76.709676],
 
   //RESLIFE
   ERK_2_W: [39.256870, -76.710440],
