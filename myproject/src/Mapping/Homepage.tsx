@@ -127,7 +127,8 @@ export default function Homepage() {
       setRouteSegments(newRouteSegments);
       setRouteVersion((v) => v + 1); 
 
-      alert(`Route found! Total cost: ${data.totalCost}`);
+      //alert(`Route found! Total cost: ${data.totalCost}`);
+      alert('Your route was found!')
     } catch (err) {
       console.error("Error fetching route:", err);
       alert("Failed to fetch route. Check console for details.");
