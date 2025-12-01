@@ -135,182 +135,393 @@ export default function Homepage() {
     }
   };
 
-  return (
-    <Container fluid className="p-2">
-      <Row>
-        {/* LEFT: controls */}
-        <Col md={3} className="d-flex flex-column gap-4">
-          {/* FROM Dropdown with clear X */}
-          <div className="d-flex align-items-center gap-2">
-            <Dropdown>
-              <Dropdown.Toggle id="from-dropdown" variant="secondary" style={{ backgroundColor: '#c91b1bff', color: 'white', borderColor: '#dc2626' }}>
-                {fromSelection.entrance
-                  ? `From: ${fromSelection.entrance}`
-                  : fromSelection.building
-                  ? `From: ${fromSelection.building}`
-                  : "Select Starting Point"}
-              </Dropdown.Toggle>
+  // return (
+  //   <Container fluid className="p-1">
+  //     <Row>
+  //       {/* LEFT: controls */}
+  //       <Col md={3} className="d-flex flex-column gap-4">
+  //         {/* FROM Dropdown with clear X */}
+  //         <div className="d-flex align-items-center gap-2">
+  //           <Dropdown>
+  //             <Dropdown.Toggle id="from-dropdown" variant="secondary" style={{ backgroundColor: '#c91b1bff', color: 'white', borderColor: '#dc2626' }}>
+  //               {fromSelection.entrance
+  //                 ? `From: ${fromSelection.entrance}`
+  //                 : fromSelection.building
+  //                 ? `From: ${fromSelection.building}`
+  //                 : "Select Starting Point"}
+  //             </Dropdown.Toggle>
 
-              <Dropdown.Menu>
-                {allBuildings.map((b) => (
-                  <Dropdown key={b} drop="end">
-                    <Dropdown.Toggle as="div" className="dropdown-item">
-                      {b}
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      {buildingEntrances[b]?.length ? (
-                        buildingEntrances[b].map((e) => (
-                          <Dropdown.Item
-                            key={e}
-                            onClick={() =>
-                              setFromSelection({ building: b, entrance: e })
-                            }
-                          >
-                            {e}
-                          </Dropdown.Item>
-                        ))
-                      ) : (
-                        <Dropdown.Item
-                          onClick={() =>
-                            setFromSelection({ building: b, entrance: null })
-                          }
-                        >
-                          (Main)
-                        </Dropdown.Item>
-                      )}
-                    </Dropdown.Menu>
-                  </Dropdown>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
+  //             <Dropdown.Menu>
+  //               {allBuildings.map((b) => (
+  //                 <Dropdown key={b} drop="end">
+  //                   <Dropdown.Toggle as="div" className="dropdown-item">
+  //                     {b}
+  //                   </Dropdown.Toggle>
+  //                   <Dropdown.Menu>
+  //                     {buildingEntrances[b]?.length ? (
+  //                       buildingEntrances[b].map((e) => (
+  //                         <Dropdown.Item
+  //                           key={e}
+  //                           onClick={() =>
+  //                             setFromSelection({ building: b, entrance: e })
+  //                           }
+  //                         >
+  //                           {e}
+  //                         </Dropdown.Item>
+  //                       ))
+  //                     ) : (
+  //                       <Dropdown.Item
+  //                         onClick={() =>
+  //                           setFromSelection({ building: b, entrance: null })
+  //                         }
+  //                       >
+  //                         (Main)
+  //                       </Dropdown.Item>
+  //                     )}
+  //                   </Dropdown.Menu>
+  //                 </Dropdown>
+  //               ))}
+  //             </Dropdown.Menu>
+  //           </Dropdown>
 
-            {fromSelection.entrance && (
-              <Button
-                variant="outline-secondary"
-                size="sm"
-                onClick={clearFrom}
-              >
-                ×
-              </Button>
-            )}
-          </div>
+  //           {fromSelection.entrance && (
+  //             <Button
+  //               variant="outline-secondary"
+  //               size="sm"
+  //               onClick={clearFrom}
+  //             >
+  //               ×
+  //             </Button>
+  //           )}
+  //         </div>
 
-          {/* TO Dropdown with clear X */}
-          <div className="d-flex align-items-center gap-2">
-            <Dropdown>
-              <Dropdown.Toggle id="to-dropdown" variant="secondary" style={{ backgroundColor: '#3751d0ff', color: 'white', borderColor: '#3751d0ff' }}>
-                {toSelection.entrance
-                  ? `To: ${toSelection.entrance}`
-                  : toSelection.building
-                  ? `To: ${toSelection.building}`
-                  : "Select Destination"}
-              </Dropdown.Toggle>
+  //         {/* TO Dropdown with clear X */}
+  //         <div className="d-flex align-items-center gap-2">
+  //           <Dropdown>
+  //             <Dropdown.Toggle id="to-dropdown" variant="secondary" style={{ backgroundColor: '#3751d0ff', color: 'white', borderColor: '#3751d0ff' }}>
+  //               {toSelection.entrance
+  //                 ? `To: ${toSelection.entrance}`
+  //                 : toSelection.building
+  //                 ? `To: ${toSelection.building}`
+  //                 : "Select Destination"}
+  //             </Dropdown.Toggle>
 
-              <Dropdown.Menu>
-                {allBuildings.map((b) => (
-                  <Dropdown key={b} drop="end">
-                    <Dropdown.Toggle as="div" className="dropdown-item">
-                      {b}
-                    </Dropdown.Toggle>
-                    <Dropdown.Menu>
-                      {buildingEntrances[b]?.length ? (
-                        buildingEntrances[b].map((e) => (
-                          <Dropdown.Item
-                            key={e}
-                            onClick={() =>
-                              setToSelection({ building: b, entrance: e })
-                            }
-                          >
-                            {e}
-                          </Dropdown.Item>
-                        ))
-                      ) : (
-                        <Dropdown.Item
-                          onClick={() =>
-                            setToSelection({ building: b, entrance: null })
-                          }
-                        >
-                          (Main)
-                        </Dropdown.Item>
-                      )}
-                    </Dropdown.Menu>
-                  </Dropdown>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
+  //             <Dropdown.Menu>
+  //               {allBuildings.map((b) => (
+  //                 <Dropdown key={b} drop="end">
+  //                   <Dropdown.Toggle as="div" className="dropdown-item">
+  //                     {b}
+  //                   </Dropdown.Toggle>
+  //                   <Dropdown.Menu>
+  //                     {buildingEntrances[b]?.length ? (
+  //                       buildingEntrances[b].map((e) => (
+  //                         <Dropdown.Item
+  //                           key={e}
+  //                           onClick={() =>
+  //                             setToSelection({ building: b, entrance: e })
+  //                           }
+  //                         >
+  //                           {e}
+  //                         </Dropdown.Item>
+  //                       ))
+  //                     ) : (
+  //                       <Dropdown.Item
+  //                         onClick={() =>
+  //                           setToSelection({ building: b, entrance: null })
+  //                         }
+  //                       >
+  //                         (Main)
+  //                       </Dropdown.Item>
+  //                     )}
+  //                   </Dropdown.Menu>
+  //                 </Dropdown>
+  //               ))}
+  //             </Dropdown.Menu>
+  //           </Dropdown>
 
-            {toSelection.entrance && (
-              <Button variant="outline-secondary" size="sm" onClick={clearTo}>
-                ×
-              </Button>
-            )}
-          </div>
+  //           {toSelection.entrance && (
+  //             <Button variant="outline-secondary" size="sm" onClick={clearTo}>
+  //               ×
+  //             </Button>
+  //           )}
+  //         </div>
 
-          {/* Submit Button */}
-          <Button
-            variant="primary"
-            onClick={handleSubmit}
-            style={{ width: "fit-content", backgroundColor: '#8a9191ff', color: 'white', borderColor: '#8a9191ff' }}
-          >
-            Find Route
-          </Button>
+  //         {/* Submit Button */}
+  //         <Button
+  //           variant="primary"
+  //           onClick={handleSubmit}
+  //           style={{ width: "fit-content", backgroundColor: '#8a9191ff', color: 'white', borderColor: '#8a9191ff' }}
+  //         >
+  //           Find Route
+  //         </Button>
     
-         {/* Elevator directions under the dropdowns */}
-          {elevatorLegs.length > 0 && (
-            <div className="mt-2 d-flex flex-column" >
-              <ElevatorInstructions legs={elevatorLegs}/>
-            </div>
-          )}
-        </Col>
+  //        {/* Elevator directions under the dropdowns */}
+  //         {elevatorLegs.length > 0 && (
+  //           <div className="mt-2 d-flex flex-column" >
+  //             <ElevatorInstructions legs={elevatorLegs}/>
+  //           </div>
+  //         )}
+  //       </Col>
 
-        {/* CENTER: Map with checkbox on RIGHT side */}
-        <Col
-          md={6}
-          className="d-flex flex-column align-items-center justify-content-center me-auto"
-          style={{ height: "700px" }}
-        >
-          <h4 className="mb-3 text-center w-100">Campus Map</h4>
+  //       {/* CENTER: Map with checkbox on RIGHT side */}
+  //       <Col
+  //         md={6}
+  //         className="d-flex flex-column align-items-center justify-content-center me-auto"
+  //         style={{ height: "700px" }}
+  //       >
+  //         {/* <h4 className="mb-3 text-center w-100">Campus Map</h4> */}
 
-          <div
-            style={{
-              position: "relative",
-              width: "800px",
-              height: "700px",
-              margin: "0 auto",
-            }}
-          >
-            <MapDisplay
-              center={new LatLng(39.2557, -76.711)}
-              routeSegments={routeSegments}
-              routeVersion={routeVersion} 
-              fromEntrance={getEntranceMarker(fromSelection.entrance)}
-              toEntrance={getEntranceMarker(toSelection.entrance)}
-              showAmenities={showAmenities}
-              entrances={allEntranceMarkers}
-              onEntranceClick={handleEntranceClick}
-            />
+  //         <div
+  //           style={{
+  //             position: "relative",
+  //             width: "1090px",
+  //             height: "800px",
+  //             margin: "0 auto",
+  //           }}
+  //         >
+  //           <MapDisplay
+  //             center={new LatLng(39.2557, -76.711)}
+  //             routeSegments={routeSegments}
+  //             routeVersion={routeVersion} 
+  //             fromEntrance={getEntranceMarker(fromSelection.entrance)}
+  //             toEntrance={getEntranceMarker(toSelection.entrance)}
+  //             showAmenities={showAmenities}
+  //             entrances={allEntranceMarkers}
+  //             onEntranceClick={handleEntranceClick}
+  //           />
 
-            {/* Checkbox on the RIGHT side of map */}
-            <div
+  //           {/* Checkbox on the RIGHT side of map */}
+  //           <div
+  //             style={{
+  //               position: "absolute",
+  //               top: "11.0rem",
+  //               right: "100%",
+  //               marginRight: "8.5rem",
+  //               whiteSpace: "nowrap",
+  //               color: "blue"
+  //             }}
+  //           >
+  //             <Form.Check
+  //               type="checkbox"
+  //               id="show-amenities"
+  //               label="Show Accessibility Amenities"
+  //               checked={showAmenities}
+  //               onChange={(e) => setShowAmenities(e.target.checked)}
+  //             />
+  //           </div>
+  //         </div>
+  //       </Col>
+  //     </Row>
+  //   </Container>
+  //);
+  return (
+  <Container
+    fluid
+    className="p-0" // no padding, so row doesn't overflow
+    style={{ height: "calc(100vh - 56px)" }} // 56px ≈ navbar height; adjust if needed
+  >
+    <Row className="h-100 g-0">  {/* g-0 removes gutter/negative margins */}
+      {/* LEFT: controls */}
+      <Col
+        md={3}
+        className="d-flex flex-column gap-4 p-3"
+        style={{ overflowY: "auto" }}
+      >
+        {/* FROM Dropdown with clear X */}
+        <div className="d-flex align-items-center gap-2">
+          <Dropdown>
+            <Dropdown.Toggle
+              id="from-dropdown"
+              variant="secondary"
               style={{
-                position: "absolute",
-                top: "0.5rem",
-                left: "100%",
-                marginLeft: "0.75rem",
-                whiteSpace: "nowrap",
+                backgroundColor: "#c91b1bff",
+                color: "white",
+                borderColor: "#dc2626",
               }}
             >
-              <Form.Check
-                type="checkbox"
-                id="show-amenities"
-                label="Show Accessibility Amenities"
-                checked={showAmenities}
-                onChange={(e) => setShowAmenities(e.target.checked)}
-              />
-            </div>
+              {fromSelection.entrance
+                ? `From: ${fromSelection.entrance}`
+                : fromSelection.building
+                ? `From: ${fromSelection.building}`
+                : "Select Starting Point"}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              {allBuildings.map((b) => (
+                <Dropdown key={b} drop="end">
+                  <Dropdown.Toggle as="div" className="dropdown-item">
+                    {b}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {buildingEntrances[b]?.length ? (
+                      buildingEntrances[b].map((e) => (
+                        <Dropdown.Item
+                          key={e}
+                          onClick={() =>
+                            setFromSelection({ building: b, entrance: e })
+                          }
+                        >
+                          {e}
+                        </Dropdown.Item>
+                      ))
+                    ) : (
+                      <Dropdown.Item
+                        onClick={() =>
+                          setFromSelection({ building: b, entrance: null })
+                        }
+                      >
+                        (Main)
+                      </Dropdown.Item>
+                    )}
+                  </Dropdown.Menu>
+                </Dropdown>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+
+          {fromSelection.entrance && (
+            <Button variant="outline-secondary" size="sm" onClick={clearFrom}>
+              ×
+            </Button>
+          )}
+        </div>
+
+        {/* TO Dropdown with clear X */}
+        <div className="d-flex align-items-center gap-2">
+          <Dropdown>
+            <Dropdown.Toggle
+              id="to-dropdown"
+              variant="secondary"
+              style={{
+                backgroundColor: "#3751d0ff",
+                color: "white",
+                borderColor: "#3751d0ff",
+              }}
+            >
+              {toSelection.entrance
+                ? `To: ${toSelection.entrance}`
+                : toSelection.building
+                ? `To: ${toSelection.building}`
+                : "Select Destination"}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              {allBuildings.map((b) => (
+                <Dropdown key={b} drop="end">
+                  <Dropdown.Toggle as="div" className="dropdown-item">
+                    {b}
+                  </Dropdown.Toggle>
+                  <Dropdown.Menu>
+                    {buildingEntrances[b]?.length ? (
+                      buildingEntrances[b].map((e) => (
+                        <Dropdown.Item
+                          key={e}
+                          onClick={() =>
+                            setToSelection({ building: b, entrance: e })
+                          }
+                        >
+                          {e}
+                        </Dropdown.Item>
+                      ))
+                    ) : (
+                      <Dropdown.Item
+                        onClick={() =>
+                          setToSelection({ building: b, entrance: null })
+                        }
+                      >
+                        (Main)
+                      </Dropdown.Item>
+                    )}
+                  </Dropdown.Menu>
+                </Dropdown>
+              ))}
+            </Dropdown.Menu>
+          </Dropdown>
+
+          {toSelection.entrance && (
+            <Button variant="outline-secondary" size="sm" onClick={clearTo}>
+              ×
+            </Button>
+          )}
+        </div>
+
+        {/* Submit Button */}
+        <Button
+          variant="primary"
+          onClick={handleSubmit}
+          style={{
+            width: "fit-content",
+            backgroundColor: "#8a9191ff",
+            color: "white",
+            borderColor: "#8a9191ff",
+          }}
+        >
+          Find Route
+        </Button>
+
+        <div className="mt-1">
+          <Form.Check
+            type="checkbox"
+            id="show-amenities"
+            label="Show Accessibility Amenities"
+            checked={showAmenities}
+            onChange={(e) => setShowAmenities(e.target.checked)}
+          />
+        </div>
+
+        {/* Elevator directions under the dropdowns */}
+        {elevatorLegs.length > 0 && (
+          <div className="mt-1 d-flex flex-column">
+            <ElevatorInstructions legs={elevatorLegs} />
           </div>
-        </Col>
-      </Row>
-    </Container>
-  );
+        )}
+      </Col>
+
+      {/* RIGHT: Map fills remaining space */}
+      <Col
+        md={9}
+        className="p-0 d-flex"
+        style={{ height: "100%" }}
+      >
+        <div
+          style={{
+            position: "relative",
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          <MapDisplay
+            center={new LatLng(39.2557, -76.711)}
+            routeSegments={routeSegments}
+            routeVersion={routeVersion}
+            fromEntrance={getEntranceMarker(fromSelection.entrance)}
+            toEntrance={getEntranceMarker(toSelection.entrance)}
+            showAmenities={showAmenities}
+            entrances={allEntranceMarkers}
+            onEntranceClick={handleEntranceClick}
+          />
+
+          {/* <div
+              style={{
+                position: "absolute",
+                top: "11.0rem",
+                right: "100%",
+                marginRight: "8.5rem",
+                whiteSpace: "nowrap",
+                color: "blue"
+              }}
+          >
+            <Form.Check
+              type="checkbox"
+              id="show-amenities"
+              label="Show Accessibility Amenities"
+              checked={showAmenities}
+              onChange={(e) => setShowAmenities(e.target.checked)}
+            />
+          </div> */}
+        </div>
+      </Col>
+    </Row>
+  </Container>
+);
 }

@@ -347,7 +347,7 @@ const MapDisplay: React.FC<MapDisplayProps> = ({
         center={center}
         zoom={zoom}
         minZoom={15}              // optional: don't zoom out to whole world
-        maxBounds={campusBounds}  // ⬅️ big box, not tight
+        maxBounds={campusBounds}  
         maxBoundsViscosity={1.0}  // hard stop *only* at that big box edge
         ref={mapRef}
         style={{ width: "100%", height: "100%" }}
@@ -412,15 +412,15 @@ const MapDisplay: React.FC<MapDisplayProps> = ({
         onClick={handleRecenter}
         style={{
           position: "absolute",
-          bottom: "1rem",
-          right: "1rem",
+          bottom: "2rem",
+          right: "2rem",
           zIndex: 1000,
           padding: "0.4rem 0.9rem",
           borderRadius: "999px",
           border: "none",
           backgroundColor: "#0d6efd",
           color: "white",
-          fontSize: "0.9rem",
+          fontSize: "1.2rem",
           boxShadow: "0 2px 6px rgba(0, 0, 0, 0.25)",
           cursor: "pointer",
         }}

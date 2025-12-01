@@ -36,12 +36,12 @@ const ElevatorInstructions: React.FC<ElevatorInstructionsProps> = ({ legs }) => 
   return (
     <div
       style={{
-        marginTop: "0.5rem",
+        //marginTop: "1.0 rem",
         padding: "0.5rem",
         border: "1px solid #ccc",
         borderRadius: "4px",
         backgroundColor: "white",
-        maxWidth: "370px",
+        maxWidth: "400px",
       }}
     >
       <h6>Elevator Instructions</h6>
@@ -54,9 +54,9 @@ const ElevatorInstructions: React.FC<ElevatorInstructionsProps> = ({ legs }) => 
 
         if (fromFloor !== null && toFloor !== null) {
           if (fromFloor < toFloor) {
-            text = `Take the elevator up from floor ${fromFloor} to ${toFloor} in ${building}.`;
+            text = `${building} - Take elevator up from floor ${fromFloor} to ${toFloor}`;
           } else if (fromFloor > toFloor) {
-            text = `Take the elevator down from floor ${fromFloor} to ${toFloor} in ${building}.`;
+            text = `${building} - Take elevator down from floor ${fromFloor} to ${toFloor}`;
           } else if (fromFloor == toFloor){
             text = `Use this door to enter the building to reach your destination.`;
           }
