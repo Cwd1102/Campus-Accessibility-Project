@@ -92,8 +92,7 @@ export default function SurveyPage() {
                   onClose={() => setSubmitted(false)}
                   dismissible
                 >
-                  Thank you for your feedback! Your responses have been saved locally
-                  and downloaded as a CSV file.
+                  Thank you for your feedback! Your responses has been submitted.
                 </Alert>
               )}
 
