@@ -230,7 +230,7 @@ S25: {
     geometry: {
       type: "LineString",
       coordinates: [
-        [-76.714555, 39.255194], [-76.714579, 39.255124], //[inter w 16] [inter w 15]
+        [-76.714555, 39.255194], [-76.714579, 39.255124], //[I11] [I36]
       ],},},
 
     S29: {
@@ -753,7 +753,7 @@ S25: {
 
     S85: {
     type: "Feature",
-    properties: { id: "S84" },
+    properties: { id: "S85" },
     geometry: {
       type: "LineString",
       coordinates: [
@@ -766,7 +766,7 @@ S25: {
 
     S86: {
     type: "Feature",
-    properties: { id: "S85" },
+    properties: { id: "S86" },
     geometry: {
       type: "LineString",
       coordinates: [
@@ -784,7 +784,7 @@ S25: {
 
     S88: {
     type: "Feature",
-    properties: { id: "S87" },
+    properties: { id: "S88" },
     geometry: {
       type: "LineString",
       coordinates: [
@@ -940,7 +940,7 @@ S25: {
 
     S105: {
     type: "Feature",
-    properties: { id: "S106" },
+    properties: { id: "S105" },
     geometry: {
       type: "LineString",
       coordinates: [
@@ -1669,7 +1669,7 @@ S25: {
 
     S183: {
     type: "Feature",
-    properties: { id: "S182" },
+    properties: { id: "S183" },
     geometry: {
       type: "LineString",
       coordinates: [
@@ -1715,7 +1715,7 @@ S25: {
 
     S188: {
     type: "Feature",
-    properties: { id: "S187" },
+    properties: { id: "S188" },
     geometry: {
       type: "LineString",
       coordinates: [
@@ -1998,7 +1998,7 @@ S25: {
     geometry: {
       type: "LineString",
       coordinates: [
-       [-76.713739, 39.253936], [ -76.714633, 39.255138] //  [I36], [PAHB_1_E]
+       [-76.714579, 39.255124], [-76.714633, 39.255138] //  [I36], [PAHB_1_E]
       ],},},
 
     S220: {

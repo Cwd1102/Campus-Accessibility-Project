@@ -159,19 +159,14 @@ const MapDisplay: React.FC<MapDisplayProps> = ({
           attribution='&copy; OpenStreetMap contributors'
         />
 
-        {/* Route */}
+        {/* Route
         {featureCollection && (
           <GeoJSON
             key={routeVersion}
             data={featureCollection}
-            // style={() => ({
-            //   color: "#0066ff",
-            //   weight: 5,
-            // })}
-        //  />
           style={(feature) => {
-      const id = (feature?.properties as any)?.id as string | undefined;
-      const isSelected =
+          const id = (feature?.properties as any)?.id as string | undefined;
+          const isSelected =
         segmentSelectionMode && id && selectedSegmentIds.includes(id);
 //
       return {
@@ -185,7 +180,7 @@ const MapDisplay: React.FC<MapDisplayProps> = ({
       if (!id) return;
 
       if (segmentSelectionMode) {
-        // 🏷 show label on hover
+        // show label on hover
         layer.bindTooltip(`Segment ${id}`, {
           sticky: true,
           direction: "auto",
@@ -201,7 +196,58 @@ const MapDisplay: React.FC<MapDisplayProps> = ({
     }}
   />
 
-        )}
+        )} */}
+        {/* Route */}
+{featureCollection && (
+  <>
+    {/* Visible line (same colors/logic you already had) */}
+    <GeoJSON
+      key={`route-visible-${routeVersion}`}
+      data={featureCollection}
+      style={(feature) => {
+        const id = (feature?.properties as any)?.id as string | undefined;
+        const isSelected =
+          segmentSelectionMode && id && selectedSegmentIds.includes(id);
+
+        return {
+          color: isSelected ? "#ff0000" : "#0066ff", // red if selected, blue otherwise
+          weight: 5,                                 // visual thickness
+        };
+      }}
+    />
+
+    {/* Fat invisible hitbox, only when selecting segments */}
+    {segmentSelectionMode && (
+      <GeoJSON
+        key={`route-hitbox-${routeVersion}`}
+        data={featureCollection}
+        style={() => ({
+          color: "#000000", // any color, we hide it with opacity
+          opacity: 0,       // invisible but still interactive
+          weight: 20,       // 👈 big click radius
+        })}
+        onEachFeature={(feature, layer) => {
+          const props: any = feature.properties || {};
+          const id: string | undefined = props.id;
+          if (!id) return;
+
+          // show label on hover
+          layer.bindTooltip(`Segment ${id}`, {
+            sticky: true,
+            direction: "auto",
+          });
+
+          // click = toggle selection
+          layer.on("click", () => {
+            if (onSegmentToggle) {
+              onSegmentToggle(id);
+            }
+          });
+        }}
+      />
+    )}
+  </>
+)}
 
         {/* Amenities (optional, toggled) */}
         {showAmenities &&

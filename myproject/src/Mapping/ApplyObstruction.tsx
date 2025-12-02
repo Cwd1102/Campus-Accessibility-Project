@@ -1,5 +1,4 @@
-// ApplyObstructionsPage.tsx
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { LatLng } from "leaflet";
 import MapDisplay from "./OpenMap";
@@ -7,68 +6,110 @@ import type { SegmentFeature } from "./Segments";
 import { SEGMENTS } from "./Segments";
 import { getAllEntranceMarkers } from "./entrance";
 
-const ApplyObstructionsPage: React.FC = () => {
-  const [selectedSegmentIds, setSelectedSegmentIds] = useState<string[]>([]);
+const ApplyObstruction: React.FC = () => {
+  const [initialBlockedIds, setInitialBlockedIds] = useState<string[]>([]);
+  const [blockedIds, setBlockedIds] = useState<string[]>([]);
+  const [routeVersion, setRouteVersion] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  // 🔹 All segments as an array
+  const entrances = getAllEntranceMarkers();
+  const center = new LatLng(39.2557, -76.711); // same as Homepage
+
+  // Use ALL segments on this page (admin wants to see everything)
   const allSegments: SegmentFeature[] = useMemo(
     () => Object.values(SEGMENTS),
     []
   );
 
-  // Segments to show on the map are *all* segments, not just a path
-  const [routeSegments] = useState<SegmentFeature[]>(allSegments);
-  const [routeVersion, setRouteVersion] = useState(0);
+  // 1) On mount: pull obstruction stats from /getobstruction
+  useEffect(() => {
+    const fetchObstructions = async () => {
+      try {
+        const resp = await fetch("http://localhost:8080/getobstruction");
+        if (!resp.ok) {
+          console.error("Failed to fetch obstructions:", resp.status);
+          setLoading(false);
+          return;
+        }
 
-  const entrances = getAllEntranceMarkers();
+        const data: { id: string; isObstructed: boolean }[] =
+          await resp.json();
 
-  const center = new LatLng(39.2557, -76.711); // same as Homepage
+        const blocked = data
+          .filter((s) => s.isObstructed === true)
+          .map((s) => s.id);
 
+        setInitialBlockedIds(blocked);
+        setBlockedIds(blocked);
+        setRouteVersion((v) => v + 1);
+      } catch (err) {
+        console.error("Error fetching obstructions:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchObstructions();
+  }, []);
+
+  // 2) Toggle red/blue when segment clicked
   const handleSegmentToggle = (segmentId: string) => {
-    setSelectedSegmentIds((prev) => {
+    setBlockedIds((prev) => {
       const exists = prev.includes(segmentId);
       const next = exists
-        ? prev.filter((id) => id !== segmentId)
-        : [...prev, segmentId];
+        ? prev.filter((id) => id !== segmentId) // red -> blue
+        : [...prev, segmentId];                // blue -> red
 
-      // bump version so GeoJSON remounts & recalculates style
       setRouteVersion((v) => v + 1);
       return next;
     });
   };
 
   const handleClear = () => {
-    setSelectedSegmentIds([]);
+    setBlockedIds([]);
     setRouteVersion((v) => v + 1);
   };
 
+  // 3) On Apply, compute block/unblock and POST to /apply-obstructions
   const handleApply = async () => {
-    if (selectedSegmentIds.length === 0) {
-      alert("No segments selected.");
+    // compute diff
+    const block = blockedIds.filter((id) => !initialBlockedIds.includes(id));
+    const unblock = initialBlockedIds.filter(
+      (id) => !blockedIds.includes(id)
+    );
+
+    if (block.length === 0 && unblock.length === 0) {
+      alert("No changes to apply.");
       return;
     }
 
     try {
-      const response = await fetch("http://localhost:8080/apply-obstructions", {
+      const resp = await fetch("http://localhost:8080/apply-obstructions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          segmentIds: selectedSegmentIds,
-        }),
+        body: JSON.stringify({ block, unblock }),
       });
 
-      if (!response.ok) {
-        const err = await response.json().catch(() => ({}));
-        alert(`Failed to apply obstructions: ${err.error ?? response.status}`);
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        alert(
+          `Failed to apply obstructions: ${err.error ?? resp.statusText}`
+        );
         return;
       }
 
+      const result = await resp.json();
+      console.log("Apply result:", result);
+
       alert(
-        `Applied obstructions to ${selectedSegmentIds.length} segment(s).`
+        `Obstructions updated. Blocked: ${result.blocked}, Unblocked: ${result.unblocked}.`
       );
-    } catch (e) {
-      console.error(e);
-      alert("Error contacting backend. Check console / server logs.");
+
+      // Sync baseline with what we just saved
+      setInitialBlockedIds(blockedIds);
+    } catch (err) {
+      console.error("Error applying obstructions:", err);
+      alert("Error applying obstructions. Check console/server logs.");
     }
   };
 
@@ -86,19 +127,21 @@ const ApplyObstructionsPage: React.FC = () => {
           style={{ overflowY: "auto" }}
         >
           <h5>Apply Obstructions</h5>
+
           <p className="mb-1">
-            Click a segment on the map to mark it as <span style={{ color: "red" }}>blocked</span>.
+            Click segments to toggle{" "}
+            <span style={{ color: "red" }}>blocked (red)</span> /
+            available (blue).
           </p>
-          <p className="mb-2">
-            Hover a segment to see its ID (e.g., <code>Segment 1234</code>).
+          <p className="mb-1">
+            Hover a segment to see its ID (e.g., <code>Segment S12</code>).
           </p>
 
           <div className="mb-2">
-            <strong>Selected:</strong> {selectedSegmentIds.length} segment
-            {selectedSegmentIds.length === 1 ? "" : "s"}
+            <strong>Currently blocked (in UI):</strong> {blockedIds.length}
           </div>
 
-          {selectedSegmentIds.length > 0 && (
+          {blockedIds.length > 0 && (
             <div
               style={{
                 maxHeight: "150px",
@@ -109,7 +152,7 @@ const ApplyObstructionsPage: React.FC = () => {
                 borderRadius: "4px",
               }}
             >
-              {selectedSegmentIds.map((id) => (
+              {blockedIds.map((id) => (
                 <div key={id}>{id}</div>
               ))}
             </div>
@@ -117,10 +160,14 @@ const ApplyObstructionsPage: React.FC = () => {
 
           <div className="d-flex gap-2 mt-2">
             <Button variant="outline-secondary" onClick={handleClear}>
-              Clear
+              Clear (UI Only)
             </Button>
-            <Button variant="danger" onClick={handleApply}>
-              Apply
+            <Button
+              variant="danger"
+              onClick={handleApply}
+              disabled={loading}
+            >
+              {loading ? "Loading..." : "Apply Changes"}
             </Button>
           </div>
         </Col>
@@ -130,16 +177,15 @@ const ApplyObstructionsPage: React.FC = () => {
           <div style={{ position: "relative", width: "100%", height: "100%" }}>
             <MapDisplay
               center={center}
-              routeSegments={routeSegments}
+              routeSegments={allSegments}           // show ALL segments
               routeVersion={routeVersion}
               fromEntrance={null}
               toEntrance={null}
               showAmenities={false}
               entrances={entrances}
               onEntranceClick={undefined}
-              // 🔴 NEW: obstruction selection mode turned ON
               segmentSelectionMode={true}
-              selectedSegmentIds={selectedSegmentIds}
+              selectedSegmentIds={blockedIds}      // red = obstructed
               onSegmentToggle={handleSegmentToggle}
             />
           </div>
@@ -149,4 +195,4 @@ const ApplyObstructionsPage: React.FC = () => {
   );
 };
 
-export default ApplyObstructionsPage;
+export default ApplyObstruction;
