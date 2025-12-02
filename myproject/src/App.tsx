@@ -13,6 +13,7 @@ import ReportObstruction from "./components/ReportObstruction";
 import LoginPage from "./components/LoginPage";
 import ManageObstruction from "./components/ManageObstruction.tsx";
 import ViewSurvey from "./components/ViewSurvey";
+import ApplyObstruction from "./Mapping/ApplyObstruction.tsx"
 //import RequireAuth from "./components/RequireAuth";
 
 // local wrapper to guard protected pages
@@ -68,6 +69,15 @@ export default function App() {
           element: (
             <RequireAuth>
               <ViewSurvey />
+            </RequireAuth>
+          ),
+        },
+
+         {
+          path: "ApplyObstruction",
+          element: (
+            <RequireAuth>
+              <ApplyObstruction />
             </RequireAuth>
           ),
         },

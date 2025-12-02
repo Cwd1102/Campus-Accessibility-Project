@@ -317,7 +317,7 @@ export default function Homepage() {
   return (
   <Container
     fluid
-    className="p-0" // no padding, so row doesn't overflow
+    className="p-1" // no padding, so row doesn't overflow
     style={{ height: "calc(100vh - 56px)" }} // 56px ≈ navbar height; adjust if needed
   >
     <Row className="h-100 g-0">  {/* g-0 removes gutter/negative margins */}
@@ -328,7 +328,7 @@ export default function Homepage() {
         style={{ overflowY: "auto" }}
       >
         {/* FROM Dropdown with clear X */}
-        <div className="d-flex align-items-center gap-2">
+        <div className="d-flex align-items-center gap-3">
           <Dropdown>
             <Dropdown.Toggle
               id="from-dropdown"
