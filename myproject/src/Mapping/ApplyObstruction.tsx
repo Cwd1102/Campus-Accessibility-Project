@@ -126,19 +126,21 @@ const ApplyObstruction: React.FC = () => {
           className="d-flex flex-column gap-3 p-3"
           style={{ overflowY: "auto" }}
         >
+          ////////////
           <h5>Apply Obstructions</h5>
-
           <p className="mb-1">
-            Click segments to toggle{" "}
-            <span style={{ color: "red" }}>blocked (red)</span> /
-            available (blue).
-          </p>
-          <p className="mb-1">
-            Hover a segment to see its ID (e.g., <code>Segment S12</code>).
+            **Hover a segment to see its ID**
           </p>
 
+
+          <p className="mb-7">
+            Click segments to select:<br />
+            <span style={{ color: "red", fontWeight: "bold"}}>blocked (red)</span><br />
+            <span style={{ color: "#0066ff", fontWeight: "bold"}}>available (blue)</span>
+          </p>
+          
           <div className="mb-2">
-            <strong>Currently blocked (in UI):</strong> {blockedIds.length}
+            <strong>Selected segments to block:</strong> {blockedIds.length}
           </div>
 
           {blockedIds.length > 0 && (
@@ -160,7 +162,7 @@ const ApplyObstruction: React.FC = () => {
 
           <div className="d-flex gap-2 mt-2">
             <Button variant="outline-secondary" onClick={handleClear}>
-              Clear (UI Only)
+              Clear crurent selection
             </Button>
             <Button
               variant="danger"
