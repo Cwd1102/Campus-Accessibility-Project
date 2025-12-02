@@ -24,6 +24,84 @@ const reportSurvey = require("./routes/survey");
 app.use("/report", reportRoutes);
 app.use("/survey", reportSurvey);
 
+app.get("/getobstruction", async (req, res) => {
+  const session = driver.session();
+
+  try {
+    const result = await session.run(`
+      MATCH ()-[r:SEGMENT]->()
+      RETURN r.id AS id, r.isObstructed AS obstructed
+      ORDER BY r.id
+    `);
+
+    const segments = result.records.map(rec => ({
+      id: rec.get("id"),
+      isObstructed: rec.get("obstructed") === true
+    }));
+
+    return res.json(segments);
+  } catch (err) {
+    console.error("Error loading segments", err);
+    return res.status(500).json({ error: "Neo4j error", details: err.message });
+  } finally {
+    await session.close();
+  }
+});
+
+app.post("/apply-obstructions", async (req, res) => {
+  const { block = [], unblock = [] } = req.body;
+
+  if (!Array.isArray(block) || !Array.isArray(unblock)) {
+    return res.status(400).json({ error: "block and unblock must be arrays" });
+  }
+
+  const session = driver.session();
+
+  try {
+    // Block segments
+    let blockCount = 0;
+    if (block.length > 0) {
+      const resultBlock = await session.run(
+        `
+        MATCH ()-[r:SEGMENT]->()
+        WHERE r.id IN $ids
+        SET r.isObstructed = true
+        RETURN count(r) AS c
+        `,
+        { ids: block }
+      );
+      blockCount = resultBlock.records[0].get("c").toNumber();
+    }
+
+    // Unblock segments
+    let unblockCount = 0;
+    if (unblock.length > 0) {
+      const resultUnblock = await session.run(
+        `
+        MATCH ()-[r:SEGMENT]->()
+        WHERE r.id IN $ids
+        SET r.isObstructed = false
+        RETURN count(r) AS c
+        `,
+        { ids: unblock }
+      );
+      unblockCount = resultUnblock.records[0].get("c").toNumber();
+    }
+
+    return res.json({
+      success: true,
+      blocked: blockCount,
+      unblocked: unblockCount
+    });
+
+  } catch (err) {
+    console.error("Error updating obstructions", err);
+    return res.status(500).json({ error: "Neo4j error", details: err.message });
+  } finally {
+    await session.close();
+  }
+});
+
 app.get("/route", async (req, res) =>{
   const { srcId, dstId } = req.query;
   console.log(`[ROUTE] ${new Date().toISOString()} src=${srcId} dst=${dstId}`);
