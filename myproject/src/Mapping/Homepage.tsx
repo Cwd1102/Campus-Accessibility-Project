@@ -35,6 +35,8 @@ export default function Homepage() {
 
   const [elevatorLegs, setElevatorLegs] = useState<RouteLeg[]>([]);
 
+  const [locateMeVersion, setLocateMeVersion] = useState(0);
+
   const buildingEntrances: Record<string, string[]> = {
     "Fine Arts": ["FA_1_N", "FA_2_C", "FA_1_S", "FA_0_E"],
     "Performing Arts and Humanities": ["PAHB_1_N", "PAHB_1_E", "PAHB_2_N"],
@@ -475,6 +477,20 @@ export default function Homepage() {
             <ElevatorInstructions legs={elevatorLegs} />
           </div>
         )}
+
+        <Button
+          variant="outline-primary"
+          onClick={() => setLocateMeVersion((v) => v + 1)}
+          style={{ 
+            width: "fit-content", 
+            position: "absolute",
+            bottom: "1.5rem", 
+            overflowY: "auto"
+          }}
+        >
+          Where am I?
+        </Button>
+
       </Col>
 
       {/* RIGHT: Map fills remaining space */}
@@ -499,6 +515,8 @@ export default function Homepage() {
             showAmenities={showAmenities}
             entrances={allEntranceMarkers}
             onEntranceClick={handleEntranceClick}
+
+            locateMeVersion={locateMeVersion}
           />
 
           {/* <div
@@ -519,6 +537,9 @@ export default function Homepage() {
               onChange={(e) => setShowAmenities(e.target.checked)}
             />
           </div> */}
+
+
+          
         </div>
       </Col>
     </Row>
