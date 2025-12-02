@@ -83,29 +83,35 @@ export default function UmbcNavbar() {
               <span className="ms-3 fw-bold fs-5 text-white d-none d-md-inline">
                 SDS Accessibility Route Map
               </span>
-            </Navbar.Brand>
+              </Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav">
               <Nav className="ms-auto d-flex align-items-center flex-nowrap gap-2">
                 <Nav.Link href="homepage">Home</Nav.Link>
                 <Nav.Link href="about">About</Nav.Link>
-                <Nav.Link href="ReportObstruction">Report Obstruction</Nav.Link>
-                <Nav.Link href="survey">Survey</Nav.Link>
+                {!user && <Nav.Link href="ReportObstruction">Report Obstruction</Nav.Link>}
+                {!user && <Nav.Link href="survey">Survey</Nav.Link>}
                  {!user ?(
                 <Link to="/LoginPage">
                   <LoginButton variant="outline-light">Login</LoginButton>
                 </Link> 
                 ) : (
                 <>
-                 <Link to="/ManageObstruction">
+                <Link to="/ManageObstruction">
                   <Nav.Link href="ManageObstruction"> Manage Obstructions</Nav.Link>
+                </Link>
+                <Link to="/ViewSurvey">
+                  <Nav.Link href="ViewSurvey"> Survey Results</Nav.Link>
+                </Link>
+                  
+                <Link to="/ApplyObstruction">
+                  <Nav.Link href="ApplyObstruction"> Apply Obstruction</Nav.Link>
+
                 </Link>
                 {/* <span className="text-light me-2">{user.email}</span> */}
                  <LoginButton variant="outline-light" onClick={handleLogout}>Logout</LoginButton>
                  </>
                 )}
-              
-        
               </Nav>
             </Navbar.Collapse>
           </Container>
