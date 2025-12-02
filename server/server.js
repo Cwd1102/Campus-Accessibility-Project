@@ -62,8 +62,25 @@ app.get("/route", async (req, res) =>{
       console.log('[GDS] Backend campusGraph already exists, skipping...');
     }
 
-    const query = `
+        await session.run(
+  "CALL gds.graph.drop('campusGraph', false) YIELD graphName"
+);
 
+    await session.run(`
+      CALL gds.graph.project.cypher(
+        'campusGraph',
+        'MATCH (i:Intersection) 
+        WHERE coalesce(i.isObstructed, false) = false 
+        RETURN id(i) AS id',
+        'MATCH (a:Intersection)-[r:SEGMENT]-(b:Intersection) 
+        WHERE coalesce(a.isObstructed, false) = false 
+          AND coalesce(b.isObstructed, false) = false 
+          AND coalesce(r.isObstructed, false) = false 
+        RETURN id(a) AS source, id(b) AS target, r.cost AS cost'
+      )
+    `);
+
+    const query = `
     MATCH (source:Intersection {id: $srcId}), (target:Intersection {id:$dstId})
 
     CALL gds.shortestPath.dijkstra.stream('campusGraph', {
