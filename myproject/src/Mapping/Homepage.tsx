@@ -35,6 +35,8 @@ export default function Homepage() {
 
   const [elevatorLegs, setElevatorLegs] = useState<RouteLeg[]>([]);
 
+  const [locateMeVersion, setLocateMeVersion] = useState(0);
+
   const buildingEntrances: Record<string, string[]> = {
     "Fine Arts": ["FA_1_N", "FA_2_C", "FA_1_S", "FA_0_E"],
     "Performing Arts and Humanities": ["PAHB_1_N", "PAHB_1_E", "PAHB_2_N"],
@@ -44,14 +46,31 @@ export default function Homepage() {
     "Sherman Hall": ["SHER_0_N", "SHER_0_S"],
     "Chemistry": ["CHM_2_N", "CHM_2_S", "CHM_0_N", "CHM_0_E", "CHM_0_S", "CHM_1_S"], 
     "Biology": ["BIO_1_S", "BIO_1_N", "BIO_1_E", "BIO_1_N1"],
-    "ILSB": [],
-    "Commons": ["UC_3_W", "UC_2_N", "UC_1_E", "UC_1_S"],
-    "University Center": [],
+    "ILSB": ["ILSB_1_N", "ILSB_1_S"],
+    "Commons": ["COM_1_W", "COM_1_E","COM_2_W","COM_2_E", "COM_0_W", "COM_0_E"],
+    "University Center": ["UC_3_W", "UC_2_N", "UC_1_E", "UC_1_S"],
     "Sondheim Hall": ["SOND_1_N", "SOND_1_S"],
     "Math & Psychology": ["MAT_1_N", "MAT_1_S"],
-    "Physics": [],
-    "Public Policy": [],
-    "AOK Library & Gallery": [],
+    "Physics": ["PHYS_1_S", "PHYS_1_N"],
+    "Public Policy": ["PUB_1_W", "PUP_1_E"],
+    "AOK Library & Gallery": ["LIB_0_W", "LIB_0_E", "LIB_1_E"],
+    "Commons Garage": ["COMG_1_W", "COMG_1_E"],
+    "Walker Garage": ["WLKG_1_S", "WLKG_3_N"],
+    "Pre-school": [],
+    "True Grits": ["TRG_1_S", "TRG_1_W","TRG_1_N"],
+    "Center for Wellbeing":["CWB_0_W", "CWB_1_N"],
+    //Reshalls
+    "Erickson Hall": ["ERK_2_W","ERK_1_W","ERK_1_E", "ERK_1_S", "ERK_0_W"],
+    "Harbor Hall": ["HRB_2_N", "HRB_2_S", "HRB_2_W", "HRB_2_E"],
+    "Chesapeake Hall": [], 
+    "Potomac Hall":[],
+    "Potapsco Hall": [],
+    "Susquehanna Hall": [],
+// HRB_2_N: [39.257485, -76.708419],
+//   HRB_2_S: [39.257446, -76.708442],
+//   HRB_2_W: [39.257257, -76.707947],
+//   HRB_2_E: [39.257185, -76.707716],
+
   };
 
   const allBuildings = Object.keys(buildingEntrances);
@@ -475,6 +494,28 @@ export default function Homepage() {
             <ElevatorInstructions legs={elevatorLegs} />
           </div>
         )}
+
+        {/* <Button
+          variant="outline-primary"
+          onClick={() => setLocateMeVersion((v) => v + 1)}
+          style={{ 
+            width: "fit-content", 
+            position: "absolute",
+            bottom: "1.5rem", 
+            overflowY: "auto"
+          }}
+        >
+          Where am I?
+        </Button> */}
+      <Button
+        variant="success"
+        onClick={() => setLocateMeVersion((v) => v + 1)}
+        className="mt-auto"
+        style={{ width: "fit-content",
+         }}
+      >
+        Where am I?
+      </Button>
       </Col>
 
       {/* RIGHT: Map fills remaining space */}
@@ -499,6 +540,8 @@ export default function Homepage() {
             showAmenities={showAmenities}
             entrances={allEntranceMarkers}
             onEntranceClick={handleEntranceClick}
+
+            locateMeVersion={locateMeVersion}
           />
 
           {/* <div
@@ -519,6 +562,9 @@ export default function Homepage() {
               onChange={(e) => setShowAmenities(e.target.checked)}
             />
           </div> */}
+
+
+          
         </div>
       </Col>
     </Row>

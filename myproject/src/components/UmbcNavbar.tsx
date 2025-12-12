@@ -97,17 +97,18 @@ export default function UmbcNavbar() {
                 </Link> 
                 ) : (
                 <>
-                <Link to="/ManageObstruction">
-                  <Nav.Link href="ManageObstruction"> Manage Obstructions</Nav.Link>
-                </Link>
-                <Link to="/ViewSurvey">
-                  <Nav.Link href="ViewSurvey"> Survey Results</Nav.Link>
-                </Link>
-                  
-                <Link to="/ApplyObstruction">
-                  <Nav.Link href="ApplyObstruction"> Apply Obstruction</Nav.Link>
+                <Nav.Link as={Link} to="/ApplyObstruction">
+                  Apply Obstruction
+                </Nav.Link>
 
-                </Link>
+                <Nav.Link as={Link} to="/ManageObstruction">
+                  Manage Obstructions
+                </Nav.Link>
+
+                <Nav.Link as={Link} to="/ViewSurvey">
+                  Survey Results
+                </Nav.Link>
+                
                 {/* <span className="text-light me-2">{user.email}</span> */}
                  <LoginButton variant="outline-light" onClick={handleLogout}>Logout</LoginButton>
                  </>
